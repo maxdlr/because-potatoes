@@ -39,7 +39,7 @@ class GameController extends AbstractController
 
                 
                 $newPin = $this->pinGenerator->generatePin();
-                $columnAndValues['pin'] = $newPin;
+                $columnAndValues['id_session'] = $newPin;
 
                 
                 $conditions = ['id' => $id];
