@@ -31,9 +31,25 @@ class StackController extends AbstractController
                 return json_encode(['message' => $key . ' missing;']);
         }
 
-        $this->stackRepository->update(
+        $response = $this->stackRepository->update(
             ['cardCount' => $data['cardCount']],
             ['gameId' => $data['gameId']]
         );
+
+        return json_encode(['message' => $response]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/reset-stack/{id}', name: 'app_reset_stack', httpMethod: ['GET'])]
+    public function resetStack(int $id): string
+    {
+        $response = $this->stackRepository->update(
+            ['cardCount' => 0],
+            ['gameId' => $id]
+        );
+
+        return json_encode(['message' => $response]);
     }
 }
