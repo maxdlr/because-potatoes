@@ -5,7 +5,10 @@ namespace App\Controller\Api;
 use App\Attribute\Route;
 use App\Controller\AbstractController;
 use App\Service\DB\Repository;
+use App\Service\RequestManager\RequestManager;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
+use function PHPUnit\Framework\assertArrayHasKey;
 
 class PlayerController extends AbstractController
 {
@@ -30,10 +33,56 @@ class PlayerController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/api/player/{id}', name: 'api_get_one_player', httpMethod: ['GET'])]
+    #[Route(uri: '/api/players/{id}', name: 'api_get_one_player', httpMethod: ['GET'])]
     public function getOnePlayer(int $id): string|false
     {
         $player = $this->repository->findOneBy(['id' => $id]);
         return json_encode($player);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/players/add-to-game', name: 'api_add_player_to_game', httpMethod: ['POST'])]
+    public function addPlayerToGame(): string
+    {
+        $playerGameRepository = new Repository('player_game');
+        $player = null;
+        $data = RequestManager::getPostBodyAsArray();
+
+        assertArrayHasKey('username', $data, 'Player username missing');
+        assertArrayHasKey('age', $data, 'Player age missing');
+        assertArrayHasKey('gameId', $data, 'Game Id missing');
+
+        $playerResponse = $this->repository->insertOne(
+            [
+                'username' => $data['username'],
+                'age' => $data['age']
+            ]
+        );
+
+        if ($playerResponse === true) {
+            $player = $this->repository->findOneBy(
+                [
+                    'username' => $data['username'],
+                    'age' => $data['age']
+                ]
+            );
+        }
+
+        $playerGameResponse = $playerGameRepository->insertOne(
+            [
+                'idPlayer' => $player['id'],
+                'idGame' => $data['gameId'],
+                'isPlaying' => false,
+                'points' => 0
+            ]
+        );
+
+        var_dump($playerGameResponse);
+
+        return json_encode([
+            'message' => $playerGameResponse
+        ]);
     }
 }
