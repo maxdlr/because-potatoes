@@ -45,6 +45,11 @@ class Player {
         const response = await FetchManager.get('/remove-player/' + this.id);
         return response.message;
     }
+
+    //todo:
+    // async addPoints(currentStackCount: int) {};
+    // async declareBecausePotatoes() {};
+    // async
 }
 
 /**
