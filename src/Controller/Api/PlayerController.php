@@ -72,14 +72,12 @@ class PlayerController extends AbstractController
 
         $playerGameResponse = $playerGameRepository->insertOne(
             [
-                'idPlayer' => $player['id'],
-                'idGame' => $data['gameId'],
+                'playerId' => $player['id'],
+                'gameId' => $data['gameId'],
                 'isPlaying' => false,
                 'points' => 0
             ]
         );
-
-        var_dump($playerGameResponse);
 
         return json_encode([
             'message' => $playerGameResponse

@@ -6,13 +6,14 @@ fetch('/api/players/add-to-game', {
     },
     //make sure to serialize your JSON body
     body: JSON.stringify({
-        playerId: 7,
-        gameId: 5,
+        username: 'maxdlr',
+        age: 33,
+        gameId: 1,
     })
 })
     .then( (response) => response.json())
     .then(data => {
-        console.log(JSON.parse(data))
+        console.log(data.message)
     })
     .catch(error => {
         throw(error);
