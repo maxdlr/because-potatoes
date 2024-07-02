@@ -1,5 +1,8 @@
 'use strict';
+import FetchManager from "../Service/FetchManager.js";
+
 class Player {
+    id = null;
     username = '';
     age = 0;
 
@@ -8,7 +11,6 @@ class Player {
         birthday = '',
     ) {
         this.checkConstructionIsValid(username, birthday);
-
         this.username = username;
         this.age = this.calculateAgeFromBirthday(birthday);
     }
@@ -24,4 +26,25 @@ class Player {
             throw 'username or birthday is missing';
         }
     }
+
+    async addToGame(gameId = 0) {
+
+        const data = {
+            username: this.username,
+            age: this.age,
+            gameId: gameId
+        }
+
+        const response = await FetchManager.post('/api/players/add-to-game', data);
+        this.id = response.player.id
+
+        return response.message;
+    }
+
+    async delete(){
+        const response = await FetchManager.get('/remove-player/' + this.id);
+        return response.message;
+    }
 }
+
+export default Player;

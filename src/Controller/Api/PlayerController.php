@@ -89,7 +89,7 @@ class PlayerController extends AbstractController
             return json_encode(['message' => $e->getMessage()]);
         }
 
-        return json_encode(['message' => true]);
+        return json_encode(['message' => true, 'player' => $player]);
     }
 
     #[Route(uri: '/remove-player/{id}', name: 'api_remove_player', httpMethod: ['GET'])]
