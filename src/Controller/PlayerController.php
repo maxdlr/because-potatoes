@@ -19,7 +19,7 @@ class PlayerController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/players', name: 'app_get_all_players', httpMethod: ['GET'])]
+    #[Route(uri: '/api/players', name: 'api_get_all_players', httpMethod: ['GET'])]
     public function getAllPlayers(): false|string
     {
         $players = $this->repository->findAll();
@@ -29,7 +29,7 @@ class PlayerController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/player/{id}', name: 'app_get_one_player', httpMethod: ['GET'])]
+    #[Route(uri: '/api/player/{id}', name: 'api_get_one_player', httpMethod: ['GET'])]
     public function getOnePlayer(int $id): string|false
     {
         $player = $this->repository->findOneBy(['id' => $id]);

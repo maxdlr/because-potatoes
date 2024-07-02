@@ -8,13 +8,13 @@ use Exception;
 use ReflectionClass;
 use ReflectionException;
 
-class DefaultController extends AbstractController
+class ApiController extends AbstractController
 {
     /**
      * @throws ReflectionException
      * @throws Exception
      */
-    #[Route(uri: '/', name: 'app_default', httpMethod: ['GET'])]
+    #[Route(uri: '/api', name: 'api_doc', httpMethod: ['GET'])]
     public function showAllRoutes(): void
     {
         $routes = [];
