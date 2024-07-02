@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Attribute\AttributeManager;
 use App\Attribute\Route;
+use App\Controller\AbstractController;
 use Exception;
 use ReflectionClass;
 use ReflectionException;

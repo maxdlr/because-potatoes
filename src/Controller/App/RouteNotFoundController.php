@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\App;
 
 use App\Attribute\Route;
+use App\Controller\AbstractController;
 
 class RouteNotFoundController extends AbstractController
 {
