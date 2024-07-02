@@ -5,9 +5,23 @@ class FetchManager {
         'Content-Type': 'application/json'
     };
 
-    static baseUrl = 'http://localhost:8000'
+    static baseUrl = window.location.origin
 
-    static async post(url = '', data = {}) {
+    /**
+     * Fonction de fetch de méthode POST
+     * @param url : string
+     * @param data : object
+     * @returns {Promise<any>}
+     *
+     * @example
+     * const data = {
+     *             username: this.username,
+     *             age: this.age,
+     *             gameId: gameId
+     *         }
+     * const response = await FetchManager.post('/api/players/add-to-game', data);
+     */
+    static async post(url, data) {
         const config = {
             method: "post",
             headers: this.postHeader,
@@ -18,7 +32,18 @@ class FetchManager {
         return response.json();
     }
 
-    static async get(url = '') {
+    /**
+     * Fonction de fetch de méthode GET.
+     * @example
+     * const response = await FetchManager.get('/remove-player/' + id);
+     *
+     * @param url : string
+     * sans la base de l'url du site.
+     * @example
+     * "/remove-player/{id}"
+     * @returns {Promise<any>}
+     */
+    static async get(url) {
         const config = {
             method: "get",
             headers: this.postHeader,
