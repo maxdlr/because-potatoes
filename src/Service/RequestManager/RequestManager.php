@@ -7,7 +7,6 @@ class RequestManager
     public static function getPostBodyAsArray(): array
     {
         $posted = file_get_contents('php://input');
-        $body = $posted;
-        return json_decode($body, true);
+        return json_decode($posted, true);
     }
 }

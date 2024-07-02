@@ -15,6 +15,6 @@ fetch('/api/players/add-to-game', {
     .then(data => {
         console.log(data.message)
     })
-    .catch(error => {
-        throw(error);
+    .catch(data => {
+        console.error(data);
     });

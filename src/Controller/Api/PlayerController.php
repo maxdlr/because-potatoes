@@ -7,7 +7,7 @@ use App\Controller\AbstractController;
 use App\Service\DB\Repository;
 use App\Service\RequestManager\RequestManager;
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
+use mysqli_sql_exception;
 use function PHPUnit\Framework\assertArrayHasKey;
 
 class PlayerController extends AbstractController
@@ -70,17 +70,23 @@ class PlayerController extends AbstractController
             );
         }
 
-        $playerGameResponse = $playerGameRepository->insertOne(
-            [
-                'playerId' => $player['id'],
-                'gameId' => $data['gameId'],
-                'isPlaying' => false,
-                'points' => 0
-            ]
-        );
+        if ($player === null) {
+            return json_encode(['message' => 'Impossible de créer le joueur']);
+        }
 
-        return json_encode([
-            'message' => $playerGameResponse
-        ]);
+        try {
+            $playerGameRepository->insertOne(
+                [
+                    'playerId' => $player['id'],
+                    'gameId' => $data['gameId'],
+                    'isPlaying' => false,
+                    'points' => 0
+                ]
+            );
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+
+        return json_encode(['message' => true]);
     }
 }
