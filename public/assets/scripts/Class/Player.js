@@ -47,4 +47,7 @@ class Player {
     }
 }
 
+/**
+ * Il faut ajouter ça pour que la classe Player soit accessible partout.
+ */
 export default Player;
