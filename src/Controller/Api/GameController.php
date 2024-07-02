@@ -51,26 +51,26 @@ class GameController extends AbstractController
     }
 
     #[Route(uri: '/api/current-stack/{id}', name: 'api_current_stack', httpMethod: ['GET'])]
-    public function getCurrentStack(int $gameId): string|false
+    public function getCurrentStack(int $id): string|false
     {
         try {
-            $game = $this->repository->findOneBy(['id' => $gameId]);
+            $game = $this->repository->findOneBy(['id' => $id]);
 
             if ($game) {
                 // Fetch players from the player_game table
                 $playerGameRepository = new Repository('player_game'); 
-                $players = $playerGameRepository->findBy(['gameId' => $gameId]);
+                $players = $playerGameRepository->findBy(['gameId' => $id]);
 
                 // Fetch current stack card count from game_stack table
                 $stackRepository = new Repository('game_stack');
-                $stack = $stackRepository->findOneBy(['id' => $gameId]);
+                $stack = $stackRepository->findOneBy(['id' => $id]);
                 $currentStackCardCount = $stack ? $stack['cardCount'] : 0;
 
                 $response = $currentStackCardCount;
 
                 return json_encode($response);
             }
-        } catch (Exception $e) {
+        } catch (mysqli_sql_exception $e) {
             return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
         }
 
