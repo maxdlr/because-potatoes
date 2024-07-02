@@ -88,13 +88,12 @@ readonly class Router
     {
         $routes = [];
 
-        $controllerNames = $this->attributeManager->getPhpFileNamesFromDir(
-            __DIR__ . '/../Controller',
-            ['AbstractController.php', 'Admin']
+        $appControllerNames = $this->attributeManager->getPhpFileNamesFromDir(
+            __DIR__ . '/../Controller/App'
         );
 
-        foreach ($controllerNames as $controller) {
-            $controllerInfo = new ReflectionClass("App\Controller\\" . $controller);
+        foreach ($appControllerNames as $controller) {
+            $controllerInfo = new ReflectionClass("App\Controller\App\\" . $controller);
             $routedMethods = $controllerInfo->getMethods();
 
             foreach ($routedMethods as $routedMethod) {
@@ -111,7 +110,7 @@ readonly class Router
                             $route->getUri(),
                             $route->getName(),
                             $route->getHttpMethod(),
-                            "App\Controller\\" . $routedMethod->getDeclaringClass()->getShortName(),
+                            "App\Controller\App\\" . $routedMethod->getDeclaringClass()->getShortName(),
                             $routedMethod->getName(),
                         );
 
@@ -120,6 +119,71 @@ readonly class Router
                 }
             }
         }
+
+        $apiControllerNames = $this->attributeManager->getPhpFileNamesFromDir(
+            __DIR__ . '/../Controller/Api'
+        );
+
+        foreach ($apiControllerNames as $controller) {
+            $controllerInfo = new ReflectionClass("App\Controller\Api\\" . $controller);
+            $routedMethods = $controllerInfo->getMethods();
+
+            foreach ($routedMethods as $routedMethod) {
+
+                foreach ($routedMethod->getAttributes() as $attributes) {
+
+                    if (!$routedMethod->isConstructor() &&
+                        $routedMethod->isPublic() &&
+                        $attributes->getName() === \App\Attribute\Route::class
+                    ) {
+                        $route = $attributes->newInstance();
+
+                        $route = new Route(
+                            $route->getUri(),
+                            $route->getName(),
+                            $route->getHttpMethod(),
+                            "App\Controller\Api\\" . $routedMethod->getDeclaringClass()->getShortName(),
+                            $routedMethod->getName(),
+                        );
+
+                        $routes[] = $route;
+                    }
+                }
+            }
+        }
+
+//        $controllerNames = $this->attributeManager->getPhpFileNamesFromDir(
+//            __DIR__ . '/../Controller',
+//            ['AbstractController.php', 'Api', 'App']
+//        );
+//
+//        foreach ($controllerNames as $controller) {
+//            $controllerInfo = new ReflectionClass("App\Controller\\" . $controller);
+//            $routedMethods = $controllerInfo->getMethods();
+//
+//            foreach ($routedMethods as $routedMethod) {
+//
+//                foreach ($routedMethod->getAttributes() as $attributes) {
+//
+//                    if (!$routedMethod->isConstructor() &&
+//                        $routedMethod->isPublic() &&
+//                        $attributes->getName() === \App\Attribute\Route::class
+//                    ) {
+//                        $route = $attributes->newInstance();
+//
+//                        $route = new Route(
+//                            $route->getUri(),
+//                            $route->getName(),
+//                            $route->getHttpMethod(),
+//                            "App\Controller\\" . $routedMethod->getDeclaringClass()->getShortName(),
+//                            $routedMethod->getName(),
+//                        );
+//
+//                        $routes[] = $route;
+//                    }
+//                }
+//            }
+//        }
         return $routes;
     }
 
