@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Attribute\Route;
+use App\Controller\AbstractController;
 use App\Service\DB\Repository;
 use Exception;
 
