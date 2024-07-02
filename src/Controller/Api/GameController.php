@@ -5,10 +5,12 @@ namespace App\Controller\Api;
 use App\Attribute\Route;
 use App\Controller\AbstractController;
 use App\Service\DB\Repository;
-use App\Service\PinGenerator;
+use App\Service\CodeGen\PinGenerator;
 use Exception;
 
 class GameController extends AbstractController
+
+
 {
     private Repository $repository;
     private PinGenerator $pinGenerator;
