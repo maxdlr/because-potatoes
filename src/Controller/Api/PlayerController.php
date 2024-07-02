@@ -50,9 +50,10 @@ class PlayerController extends AbstractController
         $player = null;
         $data = RequestManager::getPostBodyAsArray();
 
-        assertArrayHasKey('username', $data, 'Player username missing');
-        assertArrayHasKey('age', $data, 'Player age missing');
-        assertArrayHasKey('gameId', $data, 'Game Id missing');
+        foreach (['username', 'age', 'gameId'] as $key) {
+            if (!in_array($key, array_keys($data)))
+                return json_encode(['message' => $key . ' missing;']);
+        }
 
         $playerResponse = $this->repository->insertOne(
             [
