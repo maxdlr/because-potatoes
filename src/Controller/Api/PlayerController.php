@@ -12,12 +12,14 @@ use function PHPUnit\Framework\assertArrayHasKey;
 
 class PlayerController extends AbstractController
 {
-    private Repository $repository;
+    private Repository $playerRepository;
+    private Repository $playerGameRepository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->repository = new Repository('player');
+        $this->playerRepository = new Repository('player');
+        $this->playerGameRepository = new Repository('player_game');
     }
 
     /**
@@ -26,7 +28,7 @@ class PlayerController extends AbstractController
     #[Route(uri: '/api/players', name: 'api_get_all_players', httpMethod: ['GET'])]
     public function getAllPlayers(): false|string
     {
-        $players = $this->repository->findAll();
+        $players = $this->playerRepository->findAll();
         return json_encode($players);
     }
 
@@ -36,7 +38,7 @@ class PlayerController extends AbstractController
     #[Route(uri: '/api/players/{id}', name: 'api_get_one_player', httpMethod: ['GET'])]
     public function getOnePlayer(int $id): string|false
     {
-        $player = $this->repository->findOneBy(['id' => $id]);
+        $player = $this->playerRepository->findOneBy(['id' => $id]);
         return json_encode($player);
     }
 
@@ -46,7 +48,6 @@ class PlayerController extends AbstractController
     #[Route(uri: '/api/players/add-to-game', name: 'api_add_player_to_game', httpMethod: ['POST'])]
     public function addPlayerToGame(): string
     {
-        $playerGameRepository = new Repository('player_game');
         $player = null;
         $data = RequestManager::getPostBodyAsArray();
 
@@ -55,7 +56,7 @@ class PlayerController extends AbstractController
                 return json_encode(['message' => $key . ' missing;']);
         }
 
-        $playerResponse = $this->repository->insertOne(
+        $playerResponse = $this->playerRepository->insertOne(
             [
                 'username' => $data['username'],
                 'age' => $data['age']
@@ -63,7 +64,7 @@ class PlayerController extends AbstractController
         );
 
         if ($playerResponse === true) {
-            $player = $this->repository->findOneBy(
+            $player = $this->playerRepository->findOneBy(
                 [
                     'username' => $data['username'],
                     'age' => $data['age']
@@ -76,7 +77,7 @@ class PlayerController extends AbstractController
         }
 
         try {
-            $playerGameRepository->insertOne(
+            $this->playerGameRepository->insertOne(
                 [
                     'playerId' => $player['id'],
                     'gameId' => $data['gameId'],
@@ -89,5 +90,27 @@ class PlayerController extends AbstractController
         }
 
         return json_encode(['message' => true]);
+    }
+
+    #[Route(uri: '/remove-player/{id}', name: 'api_remove_player', httpMethod: ['GET'])]
+    public function removePlayer(int $id): string
+    {
+        $playerDeleted = false;
+
+        try {
+            $playerGameDeleted = $this->playerGameRepository->delete(['playerId' => $id]);
+        } catch (mysqli_sql_exception|Exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+
+        if ($playerGameDeleted === true) {
+            try {
+                $playerDeleted = $this->playerRepository->delete(['id' => $id]);
+            } catch (mysqli_sql_exception|Exception $e) {
+                return json_encode(['message' => $e->getMessage()]);
+            }
+        }
+
+        return json_encode(['message' => $playerDeleted]);
     }
 }
