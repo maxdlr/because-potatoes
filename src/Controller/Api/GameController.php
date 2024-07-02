@@ -40,14 +40,14 @@ class GameController extends AbstractController
                 $success = $this->repository->update($columnAndValues, $conditions);
 
                 if ($success) {
-                    return json_encode(['successMessage' => 'Game started successfully']);
+                    return json_encode(['message' => 'Game started successfully']);
                 }
             }
         } catch (Exception $e) {
-            return json_encode(['errorMessage' => $e->getMessage()], JSON_THROW_ON_ERROR);
+            return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
         }
 
-        return json_encode(['errorMessage' => 'Failed to start game'], JSON_THROW_ON_ERROR);
+        return json_encode(['message' => 'Failed to start game'], JSON_THROW_ON_ERROR);
     }
 
     #[Route(uri: '/api/current-stack/{id}', name: 'api_current_stack', httpMethod: ['GET'])]
@@ -71,10 +71,10 @@ class GameController extends AbstractController
                 return json_encode($response);
             }
         } catch (Exception $e) {
-            return json_encode(['errorMessage' => $e->getMessage()], JSON_THROW_ON_ERROR);
+            return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
         }
 
-        return json_encode(['errorMessage' => 'Game not found or failed to retrieve data'], JSON_THROW_ON_ERROR);
+        return json_encode(['message' => 'Game not found or failed to retrieve data'], JSON_THROW_ON_ERROR);
     }
 }
 
