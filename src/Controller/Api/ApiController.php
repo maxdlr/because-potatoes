@@ -22,12 +22,11 @@ class ApiController extends AbstractController
 
         $attributeManager = new AttributeManager();
         $controllerNames = $attributeManager->getPhpFileNamesFromDir(
-            __DIR__ . '/../Controller',
-            ['AbstractController.php', 'Admin']
+            __DIR__
         );
 
         foreach ($controllerNames as $controller) {
-            $controllerInfo = new ReflectionClass("App\Controller\\" . $controller);
+            $controllerInfo = new ReflectionClass("App\Controller\Api\\" . $controller);
             $routedMethods = $controllerInfo->getMethods();
 
             foreach ($routedMethods as $routedMethod) {
@@ -44,7 +43,39 @@ class ApiController extends AbstractController
                             $route->getUri(),
                             $route->getName(),
                             $route->getHttpMethod(),
-                            "App\Controller\\" . $routedMethod->getDeclaringClass()->getShortName(),
+                            "App\Controller\Api\\" . $routedMethod->getDeclaringClass()->getShortName(),
+                            $routedMethod->getName(),
+                        );
+
+                        $routes[] = $route;
+                    }
+                }
+            }
+        }
+
+        $controllerNames = $attributeManager->getPhpFileNamesFromDir(
+            __DIR__ . '/../App'
+        );
+
+        foreach ($controllerNames as $controller) {
+            $controllerInfo = new ReflectionClass("App\Controller\App\\" . $controller);
+            $routedMethods = $controllerInfo->getMethods();
+
+            foreach ($routedMethods as $routedMethod) {
+
+                foreach ($routedMethod->getAttributes() as $attributes) {
+
+                    if (!$routedMethod->isConstructor() &&
+                        $routedMethod->isPublic() &&
+                        $attributes->getName() === Route::class
+                    ) {
+                        $route = $attributes->newInstance();
+
+                        $route = new \App\Routing\Route(
+                            $route->getUri(),
+                            $route->getName(),
+                            $route->getHttpMethod(),
+                            "App\Controller\App\\" . $routedMethod->getDeclaringClass()->getShortName(),
                             $routedMethod->getName(),
                         );
 
