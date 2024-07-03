@@ -1,0 +1,65 @@
+@font-face {
+  font-family: "RubykOne";
+  src: url("/assets/fonts/RubikOne-Regular.woff2") format("woff2"),
+    url("/assets/fonts/RubikOne-Regular.woff") format("woff"),
+    url("/assets/fonts/RubikOne-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  background-image: url("../media/img_home/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
+
+.cta {
+  display: flex;
+  padding: 10px 45px;
+  text-decoration: none;
+  font-family: "RubykOne";
+  font-size: 40px;
+  color: white;
+  background: #664680;
+  transition: 1s;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+  transform: skewX(-15deg);
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.cta:hover {
+  transition: 0.5s;
+  box-shadow: 10px 10px 0 #664680cd;
+}
+
+.cta-player {
+  display: flex;
+  padding: 10px 45px;
+  text-decoration: none;
+  font-family: "RubykOne";
+  font-size: 40px;
+  color: white;
+  background: #eab100;
+  transition: 1s;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+  transform: skewX(-15deg);
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.cta-player:hover {
+  transition: 0.5s;
+  box-shadow: 10px 10px 0 #eab000de;
+}
+
+.bg-under {
+  box-shadow: 0 15px 25px rgba(129, 124, 124, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(14px);
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 50px;
+}
