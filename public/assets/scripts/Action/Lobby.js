@@ -71,6 +71,8 @@ async function hydratePlayers() {
     }
 }
 
+//todo: add copyable link button on page
+
 hydratePinCode()
 hydratePlayerCount(await getGamePlayerCount());
 await hydratePlayers();
