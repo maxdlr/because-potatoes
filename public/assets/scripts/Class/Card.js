@@ -22,7 +22,7 @@ class Card {
     };
 
     const response = await FetchManager.post(
-      "/add-card-to-stack/" + stackId,
+      "/add-card-to-stack/",
       data
     );
     this.id = response.card.id;
