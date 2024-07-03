@@ -32,7 +32,7 @@ class Card {
 
   static async getCardById(id) {
     const response = await FetchManager.get("/card/" + id);
-    return Card.fromData(response);
+    return response.card;
   }
 
   static async getAllCardsByGameId(gameId) {
