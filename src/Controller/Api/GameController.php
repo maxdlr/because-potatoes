@@ -8,6 +8,7 @@ use App\Service\DB\Repository;
 use App\Service\CodeGen\PinGenerator;
 use Exception;
 use JsonException;
+use mysqli_sql_exception;
 
 class GameController extends AbstractController
 {
@@ -24,57 +25,66 @@ class GameController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/api/start-game/{id}', name: 'api_start_game', httpMethod: ['PATCH'])]
-    public function startGame(int $id): string|false
+    #[Route(uri: '/api/get-game-by-session-id/{id}', name: 'api_get_game_by_session_id', httpMethod: ['GET'])]
+    public function getGameBySessionId(int $id): string
     {
         try {
-            $game = $this->repository->findOneBy(['id' => $id]);
+            $game = $this->repository->findOneBy(['sessionId' => $id]);
+            return json_encode(['game' => $game]);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
 
-            if ($game) {
-                $columnAndValues = ['isActive' => true];
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/create-game', name: 'api_create_game', httpMethod: ['GET'])]
+    public function createGame(): string
+    {
+        $sessionId = $this->pinGenerator->generatePin();
 
-                $newPin = $this->pinGenerator->generatePin();
-                $columnAndValues['id_session'] = $newPin;
+        try {
+            $inserted = $this->repository->insertOne(
+                [
+                    'sessionId' => $sessionId,
+                    'isActive' => false
+                ]
+            );
 
-                $conditions = ['id' => $id];
-                $success = $this->repository->update($columnAndValues, $conditions);
-
-                if ($success) {
-                    return json_encode(['message' => 'Game started successfully']);
-                }
+            if ($inserted !== false) {
+                return json_encode(['message' => true, 'sessionId' => $sessionId]);
             }
-        } catch (Exception $e) {
-            return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+
+        return json_encode(['message' => 'Cannot create game']);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/start-game/{id}', name: 'api_start_game', httpMethod: ['GET'])]
+    public function startGame(int $id): string
+    {
+        $game = $this->repository->findOneBy(['id' => $id]);
+
+        if ($game !== null) {
+
+            try {
+                $response = $this->repository->update(
+                    ['isActive' => true,],
+                    ['id' => $id]
+                );
+
+                return json_encode(['message' => $response]);
+            } catch (mysqli_sql_exception $e) {
+                return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
+            }
         }
 
         return json_encode(['message' => 'Failed to start game'], JSON_THROW_ON_ERROR);
-    }
-
-    #[Route(uri: '/api/current-stack/{id}', name: 'api_current_stack', httpMethod: ['GET'])]
-    public function getCurrentStack(int $id): string|false
-    {
-        try {
-            $game = $this->repository->findOneBy(['id' => $id]);
-
-            if ($game) {
-                // Fetch players from the player_game table
-                $playerGameRepository = new Repository('player_game'); 
-                $players = $playerGameRepository->findBy(['gameId' => $id]);
-
-                // Fetch current stack card count from game_stack table
-                $stackRepository = new Repository('game_stack');
-                $stack = $stackRepository->findOneBy(['id' => $id]);
-                $currentStackCardCount = $stack ? $stack['cardCount'] : 0;
-
-                $response = $currentStackCardCount;
-
-                return json_encode($response);
-            }
-        } catch (mysqli_sql_exception $e) {
-            return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
-        }
-
-        return json_encode(['message' => 'Game not found or failed to retrieve data'], JSON_THROW_ON_ERROR);
     }
 }
 

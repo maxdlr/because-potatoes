@@ -20,7 +20,7 @@ class Repository extends EntityManager
     /**
      * @throws Exception
      */
-    public function insertOne(array $columnAndValues): bool|array
+    public function insertOne(array $columnAndValues): bool
     {
         $sql = 'insert into ' . $this->tableName;
         $sql .= RepositoryUtil::formatMysqlConditionClause('insert', $columnAndValues);
