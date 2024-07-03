@@ -13,8 +13,14 @@ class HomeController extends AbstractController
         return file_get_contents('./public/templates/home.html');
     }
 
-    #[Route(uri: "/join-form", name: "app_join_form", httpMethod: ["GET"])]
-    public function joinForm(): string
+    #[Route(uri: "/join-game/{id}", name: "app_join_game_by_pin_code", httpMethod: ["GET"])]
+    public function joinGameByPinCode(): string
+    {
+        return file_get_contents('./public/templates/join-form.html');
+    }
+
+    #[Route(uri: "/join-game", name: "app_join_game", httpMethod: ["GET"])]
+    public function joinGame(): string
     {
         return file_get_contents('./public/templates/join-form.html');
     }

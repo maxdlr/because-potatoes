@@ -28,7 +28,6 @@ class Player {
     }
 
     async addToGame(gameId = 0) {
-
         const data = {
             username: this.username,
             age: this.age,

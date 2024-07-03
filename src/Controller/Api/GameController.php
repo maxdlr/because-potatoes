@@ -23,7 +23,6 @@ class GameController extends AbstractController
         $this->playerGameRepository = new Repository('player_game');
         $this->pinGenerator = new PinGenerator();
     }
-
     /**
      * @throws Exception
      */
@@ -53,7 +52,12 @@ class GameController extends AbstractController
     {
         try {
             $game = $this->repository->findOneBy(['sessionId' => $id]);
-            return json_encode(['game' => $game]);
+
+            if (null === $game) {
+                return json_encode('Game with sessionId' . $id . " doesn't exist");
+            }
+
+            return json_encode($game);
         } catch (mysqli_sql_exception $e) {
             return json_encode(['message' => $e->getMessage()]);
         }

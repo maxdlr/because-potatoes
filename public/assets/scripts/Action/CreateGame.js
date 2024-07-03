@@ -46,7 +46,6 @@ async function createGame() {
 
 function submit() {
     submitBtn.addEventListener('click', async () => {
-        console.log('submitted')
         await createGame();
     })
 }
