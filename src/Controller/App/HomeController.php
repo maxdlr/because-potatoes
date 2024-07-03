@@ -30,4 +30,10 @@ class HomeController extends AbstractController
     {
         return file_get_contents('./public/templates/rules.html');
     }
+
+    #[Route(uri: "/test", name: "app_test", httpMethod: ["GET"])]
+    public function test(): string
+    {
+        return file_get_contents('./public/templates/test.html');
+    }
 }
