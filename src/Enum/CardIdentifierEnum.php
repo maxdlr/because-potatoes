@@ -8,7 +8,8 @@ enum CardIdentifierEnum: int
     case FRIE = 2;
     case VITELOTTE = 3;
     case CRISP = 4;
-    case CROWN = 5;
+    case GLOVES = 5;
     case UNDERWEAR = 6;
-    case GLOVES = 7;
-}
+    case CROWN = 7;
+    
+} 
