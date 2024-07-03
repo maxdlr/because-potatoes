@@ -15,18 +15,33 @@
         <div class="row align-items-center justify-content-center pt-3">
             <div class="col-8">
                 <span class="cta">Salle d'attente.. </span>
-                <span class="cta" id="player-count">0<span>/8 joueurs</span></span>
+                <span class="cta" id="player-count">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </span>
             </div>
             <div class="col-4">
                 <span class="cta">Code Pin </span>
-                <span class="cta" id="pin-code"></span>
+                <span class="cta" id="pin-code">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </span>
             </div>
 
         </div>
         <div
                 id="player-list"
                 class="d-flex flex-wrap align-items-center justify-content-center pt-5"
-        ></div>
+        >
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div>
+        <button id="start-game" class="cta border border-0 d-none mt-5 mx-auto">Start</button>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

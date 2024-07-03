@@ -3,7 +3,7 @@ import Game from "../Class/Game.js";
 import Player from "../Class/Player.js";
 import FetchManager from "../Service/FetchManager.js";
 
-const pinCode = window.location.pathname.replace('/join-game/', '');
+let pinCode = window.location.pathname.replace('/join-game/', '');
 const usernameInput = document.querySelector("[name='username']");
 const birthdayInput = document.querySelector("[name='birthday']");
 const pinCodeInput = document.querySelector("[name='pinCode']");
@@ -13,6 +13,10 @@ function hydratePinCode() {
     if (pinCode.match(/[0-9]{8}/)) {
         pinCodeInput.value = pinCode
     }
+
+    pinCodeInput.addEventListener('input', () => {
+        pinCode = pinCodeInput.value
+    })
 }
 
 function hideSubmit() {
@@ -54,7 +58,7 @@ async function joinGame() {
     const response = await player.addToGame(game.id);
 
     if (true === response) {
-        window.location.replace('/lobby/' + pinCode);
+        window.location.replace('/lobby/' + pinCodeInput.value);
     } else {
         alert(response);
     }
