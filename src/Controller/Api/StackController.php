@@ -23,8 +23,8 @@ class StackController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/add-to-stack', name: 'api_add_to_stack', httpMethod: ['POST'])]
-    public function addToStack(): string
+    #[Route(uri: '/update-stack-card-count', name: 'api_update_stack_card_count', httpMethod: ['POST'])]
+    public function updateStackCardCount(): string
     {
         $data = RequestManager::getPostBodyAsArray();
 
