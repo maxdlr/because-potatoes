@@ -6,7 +6,7 @@ use App\DependencyInjection\ContainerManager;
 use App\Exception\RouteNotFoundException;
 use App\Routing\Router;
 
-if (php_sapi_name() !== 'cli' && preg_match('/\.(ico|png|jpg|jpeg|css|js|gif)$/', $_SERVER['REQUEST_URI'])) {
+if (php_sapi_name() !== 'cli' && preg_match('/\.(ico|png|jpg|jpeg|css|js|gif|ttf|woff|woff2)$/', $_SERVER['REQUEST_URI'])) {
     return false;
 }
 

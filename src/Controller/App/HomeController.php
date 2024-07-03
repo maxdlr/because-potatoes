@@ -13,9 +13,21 @@ class HomeController extends AbstractController
         return file_get_contents('./public/templates/home.html');
     }
 
-    #[Route(uri: "/test", name: "app_test", httpMethod: ["GET"])]
-    public function test(): string
+    #[Route(uri: "/join-form", name: "app_join_form", httpMethod: ["GET"])]
+    public function join_form(): string
     {
-        return file_get_contents('./public/templates/test.html');
+        return file_get_contents('./public/templates/join-form.html');
+    }
+
+    #[Route(uri: "/lobby", name: "app_lobby", httpMethod: ["GET"])]
+    public function lobby(): string
+    {
+        return file_get_contents('./public/templates/lobby.html');
+    }
+
+    #[Route(uri: "/rules", name: "app_rules", httpMethod: ["GET"])]
+    public function rules(): string
+    {
+        return file_get_contents('./public/templates/rules.html');
     }
 }
