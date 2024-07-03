@@ -36,7 +36,6 @@ class Player {
         }
 
         const response = await FetchManager.post('/api/players/add-to-game', data);
-        console.log(response);
 
         if (response.player) {
             this.id = response.player.id

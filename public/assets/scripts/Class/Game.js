@@ -14,12 +14,16 @@ class Game {
     async create() {
         const response  = await FetchManager.get('/api/create-game');
 
-        this.id = response.game.id;
-        this.sessionId = response.game.sessionId;
-        this.isActive = response.game.isActive;
-        this.turn = response.game.turn;
+        if (response.message) {
+            this.id = response.game.id;
+            this.sessionId = response.game.sessionId;
+            this.isActive = response.game.isActive;
+            this.turn = response.game.turn;
+            return this;
+        } else {
+            return response.message;
+        }
 
-        return this;
     }
 
     async getStackCardCount() {
