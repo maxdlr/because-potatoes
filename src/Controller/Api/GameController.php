@@ -52,8 +52,10 @@ class GameController extends AbstractController
                 ]
             );
 
+            $game = $this->repository->findOneBy(['sessionId' => $sessionId]);
+
             if ($inserted !== false) {
-                return json_encode(['message' => true, 'sessionId' => $sessionId]);
+                return json_encode(['message' => true, 'game' => $game]);
             }
         } catch (mysqli_sql_exception $e) {
             return json_encode(['message' => $e->getMessage()]);
@@ -85,6 +87,17 @@ class GameController extends AbstractController
         }
 
         return json_encode(['message' => 'Failed to start game'], JSON_THROW_ON_ERROR);
+    }
+
+    #[Route(uri: '/api/delete-game/{id}', name: 'api_delete_game', httpMethod: ['GET'])]
+    public function deleteGame(int $id): string
+    {
+        try {
+            $response = $this->repository->delete(['id' => $id]);
+            return json_encode(['message' => $response]);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
     }
 }
 
