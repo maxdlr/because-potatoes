@@ -25,7 +25,7 @@ class HomeController extends AbstractController
         return file_get_contents('./public/templates/create-game-form.html');
     }
 
-    #[Route(uri: "/lobby", name: "app_lobby", httpMethod: ["GET"])]
+    #[Route(uri: "/lobby/{id}", name: "app_lobby", httpMethod: ["GET"])]
     public function lobby(): string
     {
         return file_get_contents('./public/templates/lobby.html');
