@@ -1,6 +1,5 @@
 "use strict";
 import FetchManager from "../Service/FetchManager.js";
-//caca
 
 class Card {
   id = null;
