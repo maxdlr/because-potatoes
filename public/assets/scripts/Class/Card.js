@@ -22,7 +22,7 @@ class Card {
     };
 
     const response = await FetchManager.post(
-      "/add-card-to-stack/" + stackId,
+      "/add-card-to-stack/",
       data
     );
     this.id = response.card.id;
@@ -32,12 +32,12 @@ class Card {
 
   static async getCardById(id) {
     const response = await FetchManager.get("/card/" + id);
-    return Card.fromData(response);
+    return response.card;
   }
 
   static async getAllCardsByGameId(gameId) {
     const response = await FetchManager.get("/cards/" + gameId);
-    return response.map((data) => Card.fromData(data));
+    return response.cards;
   }
 
   /**
