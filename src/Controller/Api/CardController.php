@@ -92,7 +92,7 @@ class CardController extends AbstractController
             $input = json_decode($rawInput, true, 512, JSON_THROW_ON_ERROR);
             echo 'Decoded JSON input: ' . print_r($input, true) . "\n";
             
-            // Ensure 'cardId' is present in the input
+            
             if (!isset($input['cardId'])) {
                 throw new Exception('Card ID is required');
             }
