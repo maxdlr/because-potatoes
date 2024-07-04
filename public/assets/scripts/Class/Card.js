@@ -42,7 +42,7 @@ class Card {
    */
   static async mountCard() {
     const url = "/card/"; // We get the card informations by the identifier
-    const card = FetchManager.get(url + this.identifier);
+    const card = await FetchManager.get(url + this.identifier);
 
     this.id = card.id;
     this.potatoe = card.potatoe;
