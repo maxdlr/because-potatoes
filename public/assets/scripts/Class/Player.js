@@ -5,15 +5,18 @@ class Player {
     id = null;
     username = '';
     age = 0;
+    birthday = null;
 
     constructor(
         username = '',
-        birthday = '',
+        birthday = null,
         id = null,
+        age = null
     ) {
         this.id = id;
         this.username = username;
-        this.age = this.calculateAgeFromBirthday(birthday);
+        this.age = age ? age : birthday ? this.calculateAgeFromBirthday(birthday) : null;
+        this.birthday = birthday;
     }
 
     async getPlayerById(id) {

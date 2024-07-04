@@ -107,28 +107,22 @@ class GameController extends AbstractController
     #[Route(uri: '/api/start-game/{id}', name: 'api_start_game', httpMethod: ['GET'])]
     public function startGame(int $id): string
     {
-        $game = $this->repository->findOneBy(['id' => $id]);
         $gamePlayers = $this->playerGameRepository->findBy(['gameId' => $id]);
 
         if (count($gamePlayers) < 2) {
             return json_encode(['message' => 'Cannot start game with less than 2 players']);
         }
 
-        if ($game !== null) {
+        try {
+            $response = $this->repository->update(
+                ['isActive' => true],
+                ['id' => $id]
+            );
 
-            try {
-                $response = $this->repository->update(
-                    ['isActive' => true,],
-                    ['id' => $id]
-                );
-
-                return json_encode(['message' => $response]);
-            } catch (mysqli_sql_exception $e) {
-                return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
-            }
+            return json_encode(['message' => $response]);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
         }
-
-        return json_encode(['message' => 'Failed to start game'], JSON_THROW_ON_ERROR);
     }
 
     /**

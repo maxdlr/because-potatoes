@@ -12,10 +12,11 @@ const quitGameBtn = document.getElementById('quit-game');
 const copyBtn = document.getElementById('copy');
 const loadingSpinner = document.getElementById('loadingSpinner');
 
-let game = null;
-let player = new Player();
-
 const pinCode = window.location.pathname.replace('/lobby/', '');
+
+let game = new Game();
+await game.getGame(pinCode)
+let player = new Player();
 
 function hydratePinCode() {
     pinCodeEl.innerText = pinCode;
@@ -35,22 +36,6 @@ async function getThisPlayer() {
     }
 
     return player;
-}
-
-async function getGame() {
-    const fetchedGame = await FetchManager.get('/api/get-game-by-session-id/' + pinCode)
-
-    if (typeof fetchedGame !== 'object') {
-        window.location.replace('/join-game')
-    }
-
-    game = new Game(
-        fetchedGame.id,
-        fetchedGame.sessionId,
-        fetchedGame.isActive,
-        fetchedGame.turn,
-        fetchedGame.creatorId,
-    );
 }
 
 async function getGamePlayers() {
@@ -82,8 +67,11 @@ async function hydratePlayers() {
 }
 
 function showStartButton() {
-    if (startGameBtn.classList.contains('d-none')) {
-        startGameBtn.classList.remove('d-none')
+
+    if (player.id === game.creatorId) {
+        if (startGameBtn.classList.contains('d-none')) {
+            startGameBtn.classList.remove('d-none')
+        }
     }
 
     startGameBtn.addEventListener('click', async () => {
@@ -98,7 +86,13 @@ async function watchPlayerCount() {
         if (players.count === 8) {
             clearInterval(playerCountInterval);
         }
-        if (players.count > 2 && players.count <= 8) {
+        if (players.count >= 2 && players.count <= 8) {
+            await game.getGame(pinCode);
+            console.log(game.isActive)
+            if (game.isActive == true) {
+                window.location.replace('/game/' + pinCode)
+            }
+
             showStartButton();
         }
     }, 2000);
@@ -172,7 +166,6 @@ function unSetIsLoading() {
 }
 
 await getThisPlayer();
-await getGame();
 hydratePinCode();
 await watchPlayerCount();
 copyGameUrl();
