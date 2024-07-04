@@ -49,7 +49,7 @@ class Game {
     if (response === true) {
       const youngestPlayerId = await this.getYoungestPlayer();
       if (youngestPlayerId !== null) {
-        await FetchManager.get("/give-turn-to/" + youngestPlayerId);
+        await FetchManager.get("/api/give-turn-to/" + youngestPlayerId);
       }
     } else {
       alert("An error occured");

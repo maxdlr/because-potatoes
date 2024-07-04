@@ -67,7 +67,7 @@ class CardController extends AbstractController
      }
      
 
-    #[Route(uri: '/card/{id}', name: 'get_card', httpMethod: ['GET'])]
+    #[Route(uri: '/api/card/{id}', name: 'get_card', httpMethod: ['GET'])]
     public function getCard(int $id): string|false
     {
         try {
@@ -77,6 +77,17 @@ class CardController extends AbstractController
         } catch (Exception $e) {
             return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
         }
+    }
+
+    
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/allCards', name: 'api_get_all_cards', httpMethod: ['GET'])]
+    public function getAllCards(): false|string
+    {
+        $cards = $this->repository->findAll();
+        return json_encode($cards);
     }
 
     /**

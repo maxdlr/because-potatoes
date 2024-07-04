@@ -104,7 +104,7 @@ class PlayerController extends AbstractController
         return json_encode(['message' => true, 'player' => $player]);
     }
 
-    #[Route(uri: '/remove-player/{id}', name: 'api_remove_player', httpMethod: ['GET'])]
+    #[Route(uri: '/api/remove-player/{id}', name: 'api_remove_player', httpMethod: ['GET'])]
     public function removePlayer(int $id): string
     {
         $playerDeleted = false;
@@ -129,7 +129,7 @@ class PlayerController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/give-turn-to/{id}', name: 'api_give_turn_to', httpMethod: ['GET'])]
+    #[Route(uri: '/api/give-turn-to/{id}', name: 'api_give_turn_to', httpMethod: ['GET'])]
     public function giveTurnTo(int $id): string
     {
         try {
