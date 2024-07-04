@@ -125,4 +125,19 @@ class PlayerController extends AbstractController
 
         return json_encode(['message' => $playerDeleted]);
     }
+    
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/give-turn-to/{id}', name: 'api_give_turn_to', httpMethod: ['GET'])]
+    public function giveTurnTo(int $id): string
+    {
+        try {
+            $this->playerRepository->update(['isPlaying' => true], ['id' => $id]);
+            return json_encode(['message' => 'Turn given to player (ID ' . $id. ')']);
+        } catch (mysqli_sql_exception|Exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
 }
