@@ -8,6 +8,45 @@ const usernameInput = document.querySelector("[name='username']");
 const birthdayInput = document.querySelector("[name='birthday']");
 const pinCodeInput = document.querySelector("[name='pinCode']");
 const submitBtn = document.getElementById('joinGameSubmit');
+const gameListEl = document.getElementById('game-list');
+
+function buildGameListElement(gameName, url) {
+    const gameEl = document.createElement('button');
+    gameEl.classList.add('cta');
+    const gameNameEl = document.createElement('span');
+    gameNameEl.innerText = gameName;
+    gameEl.appendChild(gameNameEl)
+
+    gameEl.addEventListener('click', () => {
+        window.location.replace(url)
+    })
+
+    return gameEl;
+}
+
+async function getGameCreator(id) {
+    return await FetchManager.get('/api/get-creator/' + id);
+}
+
+async function hydrateGameList() {
+    const games = await FetchManager.get('/api/all-games');
+
+    if (games.length === 0) {
+        gameListEl.innerText = 'Aucun jeu en cours...'
+        gameListEl.appendChild(buildGameListElement('Créer', '/create-game-form'))
+        return;
+    }
+
+    gameListEl.innerHTML = null;
+    for (const game of games) {
+        const creator = await getGameCreator(game.id)
+        const gameEl = buildGameListElement(
+            'Partie de ' + creator.username,
+            '/join-game/' + game.sessionId
+        )
+        gameListEl.appendChild(gameEl)
+    }
+}
 
 function hydratePinCode() {
     if (pinCode.match(/[0-9]{8}/)) {
@@ -58,6 +97,9 @@ async function joinGame() {
     const response = await player.addToGame(game.id);
 
     if (true === response) {
+        localStorage.setItem('playerId', player.id)
+        localStorage.setItem('username', player.username)
+        localStorage.setItem('gameId', game.id)
         window.location.replace('/lobby/' + pinCodeInput.value);
     } else {
         alert(response);
@@ -72,5 +114,7 @@ function submit() {
 
 hideSubmit();
 hydratePinCode();
+await hydrateGameList();
 checkIsSubmittable();
 submit();
+

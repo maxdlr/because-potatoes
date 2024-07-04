@@ -7,17 +7,20 @@ class Game {
     sessionId;
     isActive;
     turn;
+    creatorId;
 
     constructor(
         id = null,
         sessionId = null,
         isActive = false,
-        turn = 0
+        turn = 0,
+        creatorId = null
     ) {
         this.id = id;
         this.sessionId = sessionId;
         this.isActive = isActive;
         this.turn = turn;
+        this.creatorId = creatorId
     }
 
     /**
@@ -35,7 +38,16 @@ class Game {
         } else {
             return response.message;
         }
+    }
 
+    async setCreator(gameId, playerId) {
+
+        const data = {
+            gameId: gameId,
+            playerId: playerId
+        }
+
+        return await FetchManager.post('/api/set-creator', data)
     }
 
     async getStackCardCount() {

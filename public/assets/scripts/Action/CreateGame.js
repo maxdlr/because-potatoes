@@ -6,6 +6,8 @@ const usernameInput = document.querySelector("[name='username']");
 const birthdayInput = document.querySelector("[name='birthday']");
 const submitBtn = document.getElementById('createGameSubmit');
 
+let game = null;
+
 function hideSubmit() {
     if (!submitBtn.classList.contains('d-none')) {
         submitBtn.classList.add('d-none')
@@ -31,16 +33,21 @@ function checkIsSubmittable() {
 }
 
 async function createGame() {
-    const game = new Game();
+    game = new Game();
     const player = new Player(
         usernameInput.value,
         birthdayInput.value
     );
-    const newGame = await game.create();
-    const newPlayer = await player.addToGame(newGame.id)
+    await game.create();
+    const newPlayer = await player.addToGame(game.id)
+    const isCreatorSet = await game.setCreator(game.id, player.id)
 
-    if (newPlayer) {
-        return window.location.replace('/lobby/' + newGame.sessionId);
+    if (newPlayer && isCreatorSet.message === true) {
+        localStorage.setItem('playerId', player.id)
+        localStorage.setItem('gameId', game.id)
+        return window.location.replace('/lobby/' + game.sessionId);
+    } else {
+        console.log(newPlayer, isCreatorSet)
     }
 }
 

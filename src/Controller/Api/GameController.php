@@ -6,6 +6,7 @@ use App\Attribute\Route;
 use App\Controller\AbstractController;
 use App\Service\DB\Repository;
 use App\Service\CodeGen\PinGenerator;
+use App\Service\RequestManager\RequestManager;
 use Exception;
 use JsonException;
 use mysqli_sql_exception;
@@ -14,6 +15,7 @@ class GameController extends AbstractController
 {
     private Repository $repository;
     private Repository $playerGameRepository;
+    private Repository $playerRepository;
     private PinGenerator $pinGenerator;
 
     public function __construct()
@@ -21,6 +23,7 @@ class GameController extends AbstractController
         parent::__construct();
         $this->repository = new Repository('game'); 
         $this->playerGameRepository = new Repository('player_game');
+        $this->playerRepository = new Repository('player');
         $this->pinGenerator = new PinGenerator();
     }
     /**
@@ -34,9 +37,8 @@ class GameController extends AbstractController
             $playerGames = $playerGameRepository->findBy(['gameId' => $id]);
 
             $players = [];
-            $playerRepository = new Repository('player');
             foreach ($playerGames as $playerGame) {
-                $players[] = $playerRepository->findOneBy(['id' => $playerGame['playerId']]);
+                $players[] = $this->playerRepository->findOneBy(['id' => $playerGame['playerId']]);
             }
             return json_encode($players);
         } catch (mysqli_sql_exception $e) {
@@ -76,7 +78,7 @@ class GameController extends AbstractController
             $inserted = $this->repository->insertOne(
                 [
                     'sessionId' => $sessionId,
-                    'isActive' => false
+                    'isActive' => false,
                 ]
             );
 
@@ -136,19 +138,10 @@ class GameController extends AbstractController
     public function deleteGame(int $id): string
     {
         try {
-            $playerRepository = new Repository('player');
             $stackRepository = new Repository('stack');
             $gamePlayers = $this->playerGameRepository->findBy(['gameId' => $id]);
 
             $this->playerGameRepository->delete(['gameId' => $id]);
-
-            foreach ($gamePlayers as $player) {
-                try {
-                    $playerRepository->delete(['id' => $player['playerId']]);
-                } catch (mysqli_sql_exception $e) {
-                    return json_encode(['message' => $e->getMessage()]);
-                }
-            }
 
             try {
                 $stackRepository->delete(['gameId' => $id]);
@@ -156,6 +149,15 @@ class GameController extends AbstractController
                 return json_encode(['message' => $e->getMessage()]);
             }
 
+            foreach ($gamePlayers as $player) {
+                try {
+                    $this->playerRepository->delete(['id' => $player['playerId']]);
+                } catch (mysqli_sql_exception $e) {
+                    return json_encode(['message' => $e->getMessage()]);
+                }
+            }
+
+            $this->repository->update(['creatorId' => null], ['id' => $id]);
             $response = $this->repository->delete(['id' => $id]);
 
             return json_encode(['message' => $response]);
@@ -163,5 +165,55 @@ class GameController extends AbstractController
             return json_encode(['message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/all-games', name: 'api_game_list', httpMethod: ['GET'])]
+    public function getAllGames(): string
+    {
+        $allGames = $this->repository->findAll();
+        return json_encode($allGames);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/set-creator', name: 'api_set_creator', httpMethod: ['POST'])]
+    public function setCreator(): string
+    {
+        $data = RequestManager::getPostBodyAsArray();
+
+        foreach (['gameId', 'playerId'] as $key) {
+            if (!in_array($key, array_keys($data)))
+                return json_encode(['message' => $key . ' missing;']);
+        }
+        try {
+            $response = $this->repository->update(
+                ['creatorId' => $data['playerId']],
+                ['id' => $data['gameId']]
+            );
+            return json_encode(['message' => $response]);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/get-creator/{id}', name: 'api_get_creator', httpMethod: ['GET'])]
+    public function getCreator(int $id): string
+    {
+        try {
+            $game = $this->repository->findOneBy(['id' => $id]);
+            $creator = $this->playerRepository->findOneBy(['id' => $game['creatorId']]);
+            return json_encode($creator);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+
+    }
+
 }
 

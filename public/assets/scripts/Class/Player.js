@@ -9,10 +9,20 @@ class Player {
     constructor(
         username = '',
         birthday = '',
+        id = null,
     ) {
-        this.checkConstructionIsValid(username, birthday);
+        this.id = id;
         this.username = username;
         this.age = this.calculateAgeFromBirthday(birthday);
+    }
+
+    async getPlayerById(id) {
+        this.id = id;
+        const player = await FetchManager.get('/api/players/' + id);
+        console.log(localStorage)
+        this.username = player.username;
+        this.age = player.age;
+        return this;
     }
 
     calculateAgeFromBirthday(birthday) {
@@ -20,12 +30,6 @@ class Player {
         const ageDate = new Date(ageDifMs);
         return Math.abs(ageDate.getUTCFullYear() - 1970);
     };
-
-    checkConstructionIsValid(username, birthday) {
-        if (username === '' || birthday === '') {
-            throw 'username or birthday is missing';
-        }
-    }
 
     async addToGame(gameId = 0) {
         const data = {
