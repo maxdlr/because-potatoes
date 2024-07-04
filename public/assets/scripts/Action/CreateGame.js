@@ -36,6 +36,10 @@ async function createGame() {
         usernameInput.value,
         birthdayInput.value
     );
+    if (player.age < 6) {
+        alert('Tu es trop jeune pour jouer à ce jeu.');
+        return; 
+    }
     const newGame = await game.create();
     const newPlayer = await player.addToGame(newGame.id)
 
