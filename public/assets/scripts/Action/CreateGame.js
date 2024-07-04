@@ -16,26 +16,8 @@ function showSubmit() {
         submitBtn.classList.remove('d-none')
     }
 }
-
-function calculateAge(birthday) {
-    const birthDate = new Date(birthday);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-    }
-
-   
-    return age;
-}
-
 function isFormValid() {
-    const age = calculateAge(birthdayInput.value);
-    const isValid = usernameInput.value !== '' && birthdayInput.value !== '' && age >= 6;
-    
-    return isValid;
+    return usernameInput.value !== '' && birthdayInput.value !== ''
 }
 
 function checkIsSubmittable() {
@@ -43,13 +25,10 @@ function checkIsSubmittable() {
         formEl.addEventListener('input', () => {
             if (isFormValid()) {
                 showSubmit();
-            } else {
-                hideSubmit();
             }
-        });
+        })
     }
 }
-
 
 async function createGame() {
     const game = new Game();
@@ -57,6 +36,10 @@ async function createGame() {
         usernameInput.value,
         birthdayInput.value
     );
+    if (player.age < 6) {
+        alert('Tu es trop jeune pour jouer à ce jeu.');
+        return; 
+    }
     const newGame = await game.create();
     const newPlayer = await player.addToGame(newGame.id)
 
