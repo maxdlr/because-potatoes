@@ -1,12 +1,11 @@
 <?php
 namespace App\Controller\Api;
+
 use App\Attribute\Route;
 use App\Controller\AbstractController;
 use App\Service\DB\Repository;
-
 use App\Service\RequestManager\RequestManager;
 use Exception;
-use JsonException;
 use mysqli_sql_exception;
 
 
@@ -83,7 +82,7 @@ class CardController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/add-card-to-stack', name: 'add_card_to_stack', httpMethod: ['POST'])]
+    #[Route(uri: '/api/add-card-to-stack', name: 'add_card_to_stack', httpMethod: ['POST'])]
     public function addCardToStack(): string
     {
         $data = RequestManager::getPostBodyAsArray();

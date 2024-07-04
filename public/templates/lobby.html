@@ -13,46 +13,38 @@
 <body class="d-flex align-items-center">
     <div class="container text-center bg-under">
         <div class="row align-items-center justify-content-center pt-3">
+            <button class="cta my-4" id="copy">
+                Lien
+            </button>
             <div class="col-8">
-                <span class="cta">Salle d'attente.. <br>0/8 joueurs</span>
+                <span class="cta">Salle d'attente.. </span>
+                <span class="cta" id="player-count">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </span>
             </div>
             <div class="col-4">
-                <span class="cta">Code Pin <br> 912 123</span>
+                <span class="cta">Code Pin </span>
+                <span class="cta" id="pin-code">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </span>
             </div>
 
         </div>
-        <div class="row align-items-center justify-content-center pt-5">
-            <div class="col-4">
-                <p class="cta-player">Maxousql</p>
-            </div>
-            <div class="col-4">
-                <p class="cta-player">Reda</p>
-            </div>
-            <div class="col-4">
-                <p class="cta-player">Gab1</p>
+        <div
+                id="player-list"
+                class="d-flex flex-wrap align-items-center justify-content-center pt-5"
+        >
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-        <div class="row align-items-center justify-content-center">
-            <div class="col-6">
-                <p class="cta-player">Max</p>
-            </div>
-            <div class="col-6">
-                <p class="cta-player">Maxime</p>
-            </div>
+        <div>
+        <button id="start-game" class="cta border border-0 d-none mt-5 mx-auto">Start</button>
         </div>
-        <div class="row align-items-center justify-content-center">
-            <div class="col-4">
-                <p class="cta-player">Gabin</p>
-            </div>
-            <div class="col-4">
-                <p class="cta-player">Redou</p>
-            </div>
-            <div class="col-4">
-                <p class="cta-player">Bob</p>
-            </div>
-        </div>
-
-    </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -63,6 +55,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
+    <script src="../assets/scripts/Action/Lobby.js" type="module"></script>
 </body>
 
 </html>

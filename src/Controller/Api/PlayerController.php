@@ -61,6 +61,13 @@ class PlayerController extends AbstractController
             return json_encode(['message' => 'Cannot add more than 8 players to game']);
         }
 
+        $gameRepository = new Repository('game');
+        $game = $gameRepository->findOneBy(['id' => $data['gameId']]);
+
+        if ($game === null) {
+            return json_encode(['message' => 'Game with id ' . $data['gameId'] . " doesn't exist"]);
+        }
+
         $playerResponse = $this->playerRepository->insertOne(
             [
                 'username' => $data['username'],

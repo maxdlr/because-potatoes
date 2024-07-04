@@ -21,10 +21,7 @@ class Card {
       cardId: this.id,
     };
 
-    const response = await FetchManager.post(
-      "/add-card-to-stack/",
-      data
-    );
+    const response = await FetchManager.post("/add-card-to-stack/", data);
     this.id = response.card.id;
 
     return response.message;
@@ -35,8 +32,8 @@ class Card {
     return response.card;
   }
 
-  static async getAllCardsByGameId(gameId) {
-    const response = await FetchManager.get("/cards/" + gameId);
+  static async getStackCards(gameId) {
+    const response = await FetchManager.get("/get-stack-cards/" + gameId);
     return response.cards;
   }
 

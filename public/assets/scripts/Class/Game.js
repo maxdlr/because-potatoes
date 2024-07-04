@@ -8,18 +8,28 @@ class Game {
   isActive;
   turn;
 
+  constructor(id = null, sessionId = null, isActive = false, turn = 0) {
+    this.id = id;
+    this.sessionId = sessionId;
+    this.isActive = isActive;
+    this.turn = turn;
+  }
+
   /**
    * @returns {Promise<Game>}
    */
   async create() {
     const response = await FetchManager.get("/api/create-game");
 
-    this.id = response.game.id;
-    this.sessionId = response.game.sessionId;
-    this.isActive = response.game.isActive;
-    this.turn = response.game.turn;
-
-    return this;
+    if (response.message) {
+      this.id = response.game.id;
+      this.sessionId = response.game.sessionId;
+      this.isActive = response.game.isActive;
+      this.turn = response.game.turn;
+      return this;
+    } else {
+      return response.message;
+    }
   }
 
   async getStackCardCount() {
