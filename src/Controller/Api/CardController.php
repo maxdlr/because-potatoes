@@ -8,6 +8,7 @@ use App\Service\RequestManager\RequestManager;
 use Exception;
 use JsonException;
 use mysqli_sql_exception;
+use function PHPUnit\Framework\isEmpty;
 
 
 class CardController extends AbstractController
@@ -38,21 +39,15 @@ class CardController extends AbstractController
              $stackId = $stack['id'];
              $cards = [];
      
-             if ($stackId !== null) {
-                 $cardStackRepository = new Repository('cards_stack');
-                 $cardStacks = $cardStackRepository->findBy(['stackId' => $stackId]);
-     
-                 if ($cardStacks !== null) {
-                     foreach ($cardStacks as $cardStack) {
-                         $cardId = $cardStack['cardId'];
-                         $card = $this->repository->findOneBy(['id' => $cardId]);
-                         if ($card !== null) {
-                             $cards[] = $card;
-                         }
-                     }
+             $cardStackRepository = new Repository('cards_stack');
+             $cardStacks = $cardStackRepository->findBy(['stackId' => $stackId]);
+
+             if (!isEmpty($cardStacks)) {
+                 foreach ($cardStacks as $cardStack) {
+                     $cards[] = $this->repository->findOneBy(['id' => $cardStack['cardId']]);
                  }
              }
-     
+
              $formattedCards = array_map(function ($card) {
                  return [
                      'id' => $card['id'],

@@ -3,16 +3,25 @@
 import FetchManager from "../Service/FetchManager.js";
 
 class Stack {
-
+    id;
     game;
     cardCount;
 
     /**
      * @param game : Game
      */
-    constructor(game) {
+    async constructor(game) {
         this.game = game;
-        this.cardCount = 0;
+        await this.getStack();
+    }
+
+    async getStack() {
+        const stack = await FetchManager.get('/api/current-stack/' + this.game.id);
+
+        this.id = stack.id;
+        this.cardCount = stack.cardCount;
+
+        return this;
     }
 
     /**
@@ -22,11 +31,9 @@ class Stack {
         this.cardCount = this.cardCount + number;
         const data = {
             cardCount: this.cardCount,
-            gameId: this.game.id
+            gameId: this.id
         }
-
-        const response = await FetchManager.post('/update-stack-card-count', data)
-        await this.getCardCount();
+        const response = await FetchManager.post('/api/update-card-count', data)
         return response.message;
     }
 
@@ -38,15 +45,8 @@ class Stack {
     async resetStack(gameId) {
         this.cardCount = 0;
         const response = await FetchManager.get('/reset-stack/' + gameId);
-        await this.getCardCount();
         return response.message;
     }
-
-    async getCardCount() {
-        this.cardCount = await FetchManager.get('/api/current-stack/' + this.game.id);
-        return this.cardCount;
-    }
-
 }
 
 export default Stack;

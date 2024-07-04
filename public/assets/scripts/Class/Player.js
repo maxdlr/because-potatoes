@@ -1,6 +1,6 @@
 'use strict';
 import FetchManager from "../Service/FetchManager.js";
-import { executeIfNoCommonDigits } from "./play.js";
+import {isDeclarePotatoesValid} from "../Action/DeclareBecausePatatoes.js";
 
 class Player {
     id = null;
@@ -49,18 +49,18 @@ class Player {
         return response.message;
     }
     
-    async declareBecausePotatoes(stackId) {
-        executeIfNoCommonDigits(stackId, this.id)
-    }
+    async declareBecausePotatoes(stackId, points) {
+        const data = {
+            playerId: this.id,
+            points: points
+        }
 
-    //todo:
-    // async addPoints(currentStackCount: int) {};
-    // async declareBecausePotatoes() {};
-    // async
-    
+        if (await isDeclarePotatoesValid(stackId)) {
+            return await FetchManager.post('/add-points', data);
+        }
+
+        return false;
+    }
 }
 
-/**
- * Il faut ajouter ça pour que la classe Player soit accessible partout.
- */
 export default Player;
