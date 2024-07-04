@@ -30,44 +30,56 @@ async function getGameCreator(id) {
 }
 
 async function hydrateGameList() {
-    const games = await FetchManager.get('/api/all-games');
 
-    if (games.length === 0) {
-        gameListEl.innerText = 'Aucun jeu en cours...'
-        gameListEl.appendChild(buildGameListElement('Créer', '/create-game-form'))
-        return;
-    } else {
-        setIsLoading();
-        gameListEl.innerHTML = null;
-        for (const game of games) {
-            const creator = await getGameCreator(game.id)
+    if (!hasPinCode()) {
+        const games = await FetchManager.get('/api/all-games');
 
-            if (creator) {
-                const gameEl = buildGameListElement(
-                    'Partie de ' + creator.username,
-                    '/join-game/' + game.sessionId
-                )
-                gameListEl.appendChild(gameEl)
+        if (games.length === 0) {
+            gameListEl.innerText = 'Aucun jeu en cours...'
+            gameListEl.appendChild(buildGameListElement('Créer', '/create-game-form'))
+            return;
+        } else {
+            setIsLoading();
+            gameListEl.innerHTML = null;
+            for (const game of games) {
+                const creator = await getGameCreator(game.id)
+
+                if (creator) {
+                    const gameEl = buildGameListElement(
+                        'Partie de ' + creator.username,
+                        '/join-game/' + game.sessionId
+                    )
+                    gameListEl.appendChild(gameEl)
+                }
             }
+            unSetIsLoading();
         }
-        unSetIsLoading();
+    } else {
+        gameListEl.parentElement.classList.add('d-none')
     }
 }
 
 function watchGameList() {
-    setInterval(async () => {
-        await hydrateGameList();
-    }, 5000);
+    if (!hasPinCode()) {
+        setInterval(async () => {
+            await hydrateGameList();
+        }, 5000);
+    }
 }
 
 function hydratePinCode() {
-    if (pinCode.match(/[0-9]{8}/)) {
+    if (hasPinCode()) {
         pinCodeInput.value = pinCode
     }
 
     pinCodeInput.addEventListener('input', () => {
         pinCode = pinCodeInput.value
     })
+}
+
+function hasPinCode() {
+    const match = pinCode.match(/[0-9]{8}/);
+    return match ? match.input : false;
 }
 
 function hideSubmit() {
