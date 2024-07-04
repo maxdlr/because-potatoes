@@ -21,7 +21,7 @@ async function isIdentifiersNoCommonDigits(stackId) {
             for (const char1 of str1) {
                 for (const char2 of str2) {
                     if (char1 === char2) {
-                        return true;  // Found a common digit
+                        return true; 
                     }
                 }
             }
@@ -53,17 +53,17 @@ async function countCards(stackId) {
             cardCount: numberOfCards
         };
 
-        // Update the card count in the stack
+        
         const updateResponse = await FetchManager.post('/api/update-card-count', updatePayload);
 
-        // Check the response of the update
+        
         if (updateResponse.message === 'Card count updated successfully') {
             console.log('Card count updated successfully');
         } else {
             console.error('Failed to update card count:', updateResponse.message);
         }
 
-        return numberOfCards; // Return the number of cards
+        return numberOfCards; 
 
     } catch (error) {
         console.error('Error fetching or processing data:', error);
@@ -71,12 +71,18 @@ async function countCards(stackId) {
     }
 
 }
-async function executeIfNoCommonDigits(stackId) {
+export async function executeIfNoCommonDigits(stackId, playerId) {
+
     const noCommonDigits = await isIdentifiersNoCommonDigits(stackId);
-    if (noCommonDigits) {
+
+    if (!noCommonDigits) {
         const cardCount = await countCards(stackId);
         console.log(`Number of cards: ${cardCount}`);
     } else {
         console.log('Identifiers have common digits, countCards will not execute.');
     }
+
+    // Ajouter cardCount au player
+
+    const addedToPlayer = await addCardCountToPlayer(playerId, cardCount);
 }

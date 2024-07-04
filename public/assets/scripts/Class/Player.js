@@ -1,5 +1,6 @@
 'use strict';
 import FetchManager from "../Service/FetchManager.js";
+import { executeIfNoCommonDigits } from "./play.js";
 
 class Player {
     id = null;
@@ -47,11 +48,16 @@ class Player {
         const response = await FetchManager.get('/remove-player/' + this.id);
         return response.message;
     }
+    
+    async declareBecausePotatoes(stackId) {
+        executeIfNoCommonDigits(stackId, this.id)
+    }
 
     //todo:
     // async addPoints(currentStackCount: int) {};
     // async declareBecausePotatoes() {};
     // async
+    
 }
 
 /**
