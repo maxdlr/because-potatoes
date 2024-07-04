@@ -18,7 +18,7 @@ class Card {
   async addToStack(stackId = 0) {
     const data = {
       stackId: stackId,
-      id: this.id,
+      cardId: this.id,
     };
 
     const response = await FetchManager.post(
