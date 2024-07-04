@@ -1,54 +1,66 @@
-"use strict";
+'use strict';
 import FetchManager from "../Service/FetchManager.js";
 
 class Player {
-  id = null;
-  username = "";
-  age = 0;
+    id = null;
+    username = '';
+    age = 0;
 
-  constructor(username = "", birthday = "") {
-    this.checkConstructionIsValid(username, birthday);
-    this.username = username;
-    this.age = this.calculateAgeFromBirthday(birthday);
-  }
-
-  calculateAgeFromBirthday(birthday) {
-    const ageDifMs = Date.now() - new Date(birthday).getTime();
-    const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
-  }
-
-  checkConstructionIsValid(username, birthday) {
-    if (username === "" || birthday === "") {
-      throw "username or birthday is missing";
+    constructor(
+        username = '',
+        birthday = '',
+        id = null,
+    ) {
+        this.id = id;
+        this.username = username;
+        this.age = this.calculateAgeFromBirthday(birthday);
     }
-  }
 
-  async addToGame(gameId = 0) {
-    const data = {
-      username: this.username,
-      age: this.age,
-      gameId: gameId,
+    async getPlayerById(id) {
+        this.id = id;
+        const player = await FetchManager.get('/api/players/' + id);
+        console.log(localStorage)
+
+        if (!player) {
+            return false;
+        }
+
+        this.username = player.username;
+        this.age = player.age;
+        return this;
+    }
+
+    calculateAgeFromBirthday(birthday) {
+        const ageDifMs = Date.now() - new Date(birthday).getTime();
+        const ageDate = new Date(ageDifMs);
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
     };
 
-    const response = await FetchManager.post("/api/players/add-to-game", data);
+    async addToGame(gameId = 0) {
+        const data = {
+            username: this.username,
+            age: this.age,
+            gameId: gameId
+        }
 
-    if (response.player) {
-      this.id = response.player.id;
+        const response = await FetchManager.post('/api/players/add-to-game', data);
+
+        if (response.player) {
+            this.id = response.player.id
+        }
+
+        return response.message;
     }
 
-    return response.message;
-  }
+    async delete(){
+        const response = await FetchManager.get('/api/remove-player/' + this.id);
+        return response.message;
+    }
 
-  async delete() {
-    const response = await FetchManager.get("/api/remove-player/" + this.id);
-    return response.message;
-  }
-
-  //todo:
-  // async addPoints(currentStackCount: int) {};
-  // async declareBecausePotatoes() {};
-  // async
+    //todo:
+    // async addPoints(currentStackCount: int) {};
+    // async declareBecausePotatoes() {};
+    // async
 }
 
 /**
