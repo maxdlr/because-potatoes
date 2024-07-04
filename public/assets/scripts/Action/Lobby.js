@@ -7,6 +7,7 @@ const playerCountEl = document.getElementById('player-count');
 const playerListEl = document.getElementById('player-list');
 const pinCodeEl = document.getElementById('pin-code');
 const startGameBtn = document.getElementById('start-game');
+const copyBtn = document.getElementById('copy');
 
 const pinCode = window.location.pathname.replace('/lobby/', '');
 
@@ -68,7 +69,18 @@ function buildPlayerEl(username) {
     return element;
 }
 
-//todo: add copyable link button on page
+console.log(window.location)
 
-hydratePinCode()
+function copyGameUrl() {
+    copyBtn.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(window.location.origin + '/join-game/' + pinCode)
+        copyBtn.innerText = 'Lien copié !';
+        setTimeout(() => {
+            copyBtn.innerText = 'Lien';
+        }, 3000)
+    })
+}
+
+hydratePinCode();
 await watchPlayerCount();
+copyGameUrl();
