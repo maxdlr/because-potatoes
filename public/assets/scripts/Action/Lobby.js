@@ -21,16 +21,26 @@ async function getGame() {
 
 async function getGamePlayers() {
     const game = await getGame()
-    return await game.getPlayers()
+    const players = await game.getPlayers();
+    const playersCount = players.length;
+
+    return {
+        players: players,
+        count: playersCount
+    }
 }
 
-async function getGamePlayerCount() {
+async function hydratePlayers() {
     const players = await getGamePlayers();
-    return players.length;
-}
 
-function hydratePlayerCount(count) {
-    playerCountEl.innerText = count + '/8 joueurs';
+    playerCountEl.innerText = players.count + '/8 joueurs';
+
+    playerListEl.innerHTML = null;
+    for (const key in players.players) {
+        playerListEl.appendChild(buildPlayerEl(players.players[key].username))
+    }
+
+    return players;
 }
 
 function showStartButton() {
@@ -41,15 +51,11 @@ function showStartButton() {
 
 async function watchPlayerCount() {
     const playerCountInterval = setInterval(async () => {
-
-        const count = await getGamePlayerCount();
-
-        await hydratePlayerCount(count);
-        await hydratePlayers();
-        if (count === 8) {
+        const players = await hydratePlayers();
+        if (players.count === 8) {
             clearInterval(playerCountInterval);
         }
-        if (count > 2 && count <= 8) {
+        if (players.count > 2 && players.count <= 8) {
             showStartButton();
         }
     }, 2000);
@@ -62,18 +68,7 @@ function buildPlayerEl(username) {
     return element;
 }
 
-async function hydratePlayers() {
-    const players = await getGamePlayers();
-
-    playerListEl.innerHTML = null;
-    for (const key in players) {
-        playerListEl.appendChild(buildPlayerEl(players[key].username))
-    }
-}
-
 //todo: add copyable link button on page
 
 hydratePinCode()
-hydratePlayerCount(await getGamePlayerCount());
-await hydratePlayers();
 await watchPlayerCount();
