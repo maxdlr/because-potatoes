@@ -79,6 +79,17 @@ class CardController extends AbstractController
         }
     }
 
+    
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/allCards', name: 'api_get_all_cards', httpMethod: ['GET'])]
+    public function getAllCards(): false|string
+    {
+        $cards = $this->repository->findAll();
+        return json_encode($cards);
+    }
+
     /**
      * @throws Exception
      */
