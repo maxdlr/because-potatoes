@@ -8,6 +8,18 @@ class Game {
     isActive;
     turn;
 
+    constructor(
+        id = null,
+        sessionId = null,
+        isActive = false,
+        turn = 0
+    ) {
+        this.id = id;
+        this.sessionId = sessionId;
+        this.isActive = isActive;
+        this.turn = turn;
+    }
+
     /**
      * @returns {Promise<Game>}
      */

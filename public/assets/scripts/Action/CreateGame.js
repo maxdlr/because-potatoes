@@ -40,13 +40,12 @@ async function createGame() {
     const newPlayer = await player.addToGame(newGame.id)
 
     if (newPlayer) {
-        return window.location.replace('/lobby');
+        return window.location.replace('/lobby/' + newGame.sessionId);
     }
 }
 
 function submit() {
     submitBtn.addEventListener('click', async () => {
-        console.log('submitted')
         await createGame();
     })
 }
