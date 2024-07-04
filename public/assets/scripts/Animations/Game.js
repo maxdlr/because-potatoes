@@ -222,6 +222,49 @@ class Game {
 
     this.centerCards = [];
   }
+
+  refillCards(playerIndex, numCards) {
+    const maxHandSize = 3;
+    const playerHand = this.playerCards[playerIndex];
+
+    if (playerHand.length + numCards <= maxHandSize) {
+      for (let i = 0; i < numCards; i++) {
+        if (this.deck.length > 0) {
+          const cardNumber = this.deck.pop();
+          const newCard = document.createElement("div");
+          newCard.classList.add("carte", "carte-mine");
+          document.body.appendChild(newCard);
+
+          const index = playerHand.length;
+          const xPos =
+            this.centerX + this.positions[playerIndex].x + index * 30;
+          console.log(xPos);
+          const yPos = this.centerY + this.positions[playerIndex].y;
+
+          gsap.fromTo(
+            newCard,
+            {
+              x: this.centerX - window.innerWidth * 0.26,
+              y: this.centerY,
+              rotation: 0,
+            },
+            {
+              duration: 1,
+              x: xPos,
+              y: yPos,
+              rotation: this.positions[playerIndex].rotation,
+              onStart: () => this.cardSound.play(),
+            }
+          );
+
+          playerHand.push(newCard);
+          this.addCardClickHandlers();
+        }
+      }
+    } else {
+      console.warn("Cannot refill cards: player hand will exceed maximum size");
+    }
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -230,10 +273,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
-      game.playCards(2, 1);
+      game.playCards(2, 3);
     }
     if (event.code === "KeyC") {
       game.collectCenterCards(0);
+    }
+    if (event.code === "KeyR") {
+      game.refillCards(2, 3);
     }
   });
 });
