@@ -140,4 +140,15 @@ class PlayerController extends AbstractController
         }
     }
 
+    #[Route(uri: '/api/getPointsPlayers/{id}', name: 'api_get_points_player', httpMethod: ['GET'])]
+    public function getPointsPlayer(int $id): string|false
+    {
+        try {
+            $playerGame = $this->playerGameRepository->findOneBy(['playerId' => $id]);
+            return json_encode(['points' => $playerGame['points']]);
+        } catch (mysqli_sql_exception|Exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
 }
