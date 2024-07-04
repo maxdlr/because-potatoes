@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
-      game.playCards(2, 3);
+      game.playCards(3, 2);
     }
     if (event.code === "KeyC") {
       game.collectCenterCards(0);
