@@ -6,6 +6,7 @@ use App\Attribute\Route;
 use App\Controller\AbstractController;
 use App\Service\DB\Repository;
 use App\Service\CodeGen\PinGenerator;
+use App\Service\RequestManager\RequestManager;
 use Exception;
 use JsonException;
 use mysqli_sql_exception;
@@ -163,5 +164,38 @@ class GameController extends AbstractController
             return json_encode(['message' => $e->getMessage()]);
         }
     }
-}
 
+    
+    #[Route(uri: '/api/update-card-count', name: 'api_update_card_count', httpMethod: ['POST'])]
+    public function updateCardCount(): string
+    {
+        $data = RequestManager::getPostBodyAsArray();
+
+    
+        foreach (['gameId', 'cardCount'] as $key) {
+            if (!in_array($key, array_keys($data)))
+                return json_encode(['message' => $key . ' missing;']);
+        }
+        
+        $repository = new Repository('stack');
+    
+        try {
+            
+            $updated = $repository->update(
+                ['cardCount' => $data['cardCount']],
+                ['gameId' => $data['gameId']]
+            );
+    
+            
+            if ($updated) {
+                return json_encode(['message' => 'Card count updated successfully']);
+            } else {
+                return json_encode(['message' => 'Failed to update card count']);
+            }
+    
+        } catch (Exception $e) {
+            
+            return json_encode(['message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+}
