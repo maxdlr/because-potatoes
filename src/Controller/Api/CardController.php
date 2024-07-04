@@ -67,7 +67,7 @@ class CardController extends AbstractController
      }
      
 
-    #[Route(uri: '/card/{id}', name: 'get_card', httpMethod: ['GET'])]
+    #[Route(uri: '/api/card/{id}', name: 'get_card', httpMethod: ['GET'])]
     public function getCard(int $id): string|false
     {
         try {
