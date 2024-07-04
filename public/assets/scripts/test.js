@@ -2,10 +2,9 @@
 
 import FetchManager from "./Service/FetchManager.js";
 const data = {
-    stackId: 2,
-    cardId: 3
+  gameId: 1,
 };
 
-const response = await FetchManager.post('/add-card-to-stack', data);
+const response = await FetchManager.post("/api/get-stack-cards/1");
 
-console.log(response)
+console.log(response);

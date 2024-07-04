@@ -1,0 +1,53 @@
+body {
+  background-image: url("../media/img_game/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.carte {
+  width: 100px;
+  height: 150px;
+  background-image: url("../media/img_game/back-card.png");
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  overflow-x: hidden;
+}
+
+.carte-mine1 {
+  background-image: url("../media/img_game/2.png");
+}
+
+.carte-mine2 {
+  background-image: url("../media/img_game/4.png");
+}
+
+.carte-mine3 {
+  background-image: url("../media/img_game/7.png");
+}
+
+.carte-mine:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+#pioche {
+  background-image: url("../media/img_game/back-card.png");
+  background-size: cover;
+  width: 100px;
+  height: 150px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

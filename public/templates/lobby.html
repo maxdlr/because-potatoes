@@ -44,8 +44,13 @@
         </div>
         <div>
             <div class="d-flex justify-content-center align-items-center">
-        <button id="start-game" class="cta border border-0 d-none m-5 mx-auto">Start</button>
-        <button id="quit-game" class="cta border border-0 m-5 mx-auto">Quitter</button>
+                <button id="start-game" class="cta border border-0 d-none m-5 mx-auto">Start</button>
+                <div class="cta d-none m-5 mx-auto" id="loadingSpinner">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <button id="quit-game" class="cta border border-0 m-5 mx-auto">Quitter</button>
             </div>
         </div>
     </div>

@@ -9,6 +9,7 @@ const birthdayInput = document.querySelector("[name='birthday']");
 const pinCodeInput = document.querySelector("[name='pinCode']");
 const submitBtn = document.getElementById('joinGameSubmit');
 const gameListEl = document.getElementById('game-list');
+const loadingSpinner = document.getElementById('loadingSpinner');
 
 function buildGameListElement(gameName, url) {
     const gameEl = document.createElement('button');
@@ -35,17 +36,28 @@ async function hydrateGameList() {
         gameListEl.innerText = 'Aucun jeu en cours...'
         gameListEl.appendChild(buildGameListElement('Créer', '/create-game-form'))
         return;
-    }
+    } else {
+        setIsLoading();
+        gameListEl.innerHTML = null;
+        for (const game of games) {
+            const creator = await getGameCreator(game.id)
 
-    gameListEl.innerHTML = null;
-    for (const game of games) {
-        const creator = await getGameCreator(game.id)
-        const gameEl = buildGameListElement(
-            'Partie de ' + creator.username,
-            '/join-game/' + game.sessionId
-        )
-        gameListEl.appendChild(gameEl)
+            if (creator) {
+                const gameEl = buildGameListElement(
+                    'Partie de ' + creator.username,
+                    '/join-game/' + game.sessionId
+                )
+                gameListEl.appendChild(gameEl)
+            }
+        }
+        unSetIsLoading();
     }
+}
+
+function watchGameList() {
+    setInterval(async () => {
+        await hydrateGameList();
+    }, 5000);
 }
 
 function hydratePinCode() {
@@ -106,6 +118,25 @@ async function joinGame() {
     }
 }
 
+function setIsLoading() {
+    if (!gameListEl.classList.contains('d-none')) {
+        gameListEl.classList.add('d-none')
+    }
+    if (loadingSpinner.classList.contains('d-none')) {
+        loadingSpinner.classList.remove('d-none')
+    }
+}
+
+function unSetIsLoading() {
+    if (!loadingSpinner.classList.contains('d-none')) {
+        loadingSpinner.classList.add('d-none')
+    }
+
+    if (gameListEl.classList.contains('d-none')) {
+        gameListEl.classList.remove('d-none')
+    }
+}
+
 function submit() {
     submitBtn.addEventListener('click', async () => {
         await joinGame();
@@ -117,4 +148,5 @@ hydratePinCode();
 await hydrateGameList();
 checkIsSubmittable();
 submit();
+watchGameList()
 

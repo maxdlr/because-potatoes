@@ -10,9 +10,10 @@ const pinCodeEl = document.getElementById('pin-code');
 const startGameBtn = document.getElementById('start-game');
 const quitGameBtn = document.getElementById('quit-game');
 const copyBtn = document.getElementById('copy');
+const loadingSpinner = document.getElementById('loadingSpinner');
 
 let game = null;
-let player = null;
+let player = new Player();
 
 const pinCode = window.location.pathname.replace('/lobby/', '');
 
@@ -27,12 +28,22 @@ async function getThisPlayer() {
     }
 
     const playerId = localStorage.getItem('playerId');
-    player = new Player();
-    return player.getPlayerById(playerId);
+    player = await player.getPlayerById(playerId);
+
+    if (!player) {
+        window.location.replace('/join-game/' + pinCode);
+    }
+
+    return player;
 }
 
 async function getGame() {
     const fetchedGame = await FetchManager.get('/api/get-game-by-session-id/' + pinCode)
+
+    if (typeof fetchedGame !== 'object') {
+        window.location.replace('/join-game')
+    }
+
     game = new Game(
         fetchedGame.id,
         fetchedGame.sessionId,
@@ -44,6 +55,7 @@ async function getGame() {
 
 async function getGamePlayers() {
     const players = await game.getPlayers();
+
     const playersCount = players.length;
 
     return {
@@ -54,6 +66,10 @@ async function getGamePlayers() {
 
 async function hydratePlayers() {
     const players = await getGamePlayers();
+
+    if (players.count === 0) {
+        window.location.replace('/join-game')
+    }
 
     playerCountEl.innerText = players.count + '/8 joueurs';
 
@@ -105,11 +121,12 @@ async function leave() {
     const players = await getGamePlayers();
 
     if (confirmBeforeLeave) {
+        setIsLoading();
+
         if (game.creatorId === player.id || players.count === 0) {
-            game.delete();
+            await game.delete();
         }
         const deleted = await player.delete();
-
         if (deleted) {
             localStorage.clear();
         }
@@ -128,6 +145,25 @@ function deletePlayerOnLeave() {
     window.addEventListener('beforeunload', async () => {
         await leave();
     })
+}
+
+function setIsLoading() {
+    if (!quitGameBtn.classList.contains('d-none')) {
+        quitGameBtn.classList.add('d-none')
+    }
+    if (loadingSpinner.classList.contains('d-none')) {
+        loadingSpinner.classList.remove('d-none')
+    }
+}
+
+function unSetIsLoading() {
+    if (!loadingSpinner.classList.contains('d-none')) {
+        loadingSpinner.classList.add('d-none')
+    }
+
+    if (quitGameBtn.classList.contains('d-none')) {
+        quitGameBtn.classList.remove('d-none')
+    }
 }
 
 await getThisPlayer();

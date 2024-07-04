@@ -20,6 +20,11 @@ class Player {
         this.id = id;
         const player = await FetchManager.get('/api/players/' + id);
         console.log(localStorage)
+
+        if (!player) {
+            return false;
+        }
+
         this.username = player.username;
         this.age = player.age;
         return this;
@@ -48,7 +53,7 @@ class Player {
     }
 
     async delete(){
-        const response = await FetchManager.get('/remove-player/' + this.id);
+        const response = await FetchManager.get('/api/remove-player/' + this.id);
         return response.message;
     }
 

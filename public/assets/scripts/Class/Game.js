@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 import FetchManager from "../Service/FetchManager.js";
 
@@ -50,21 +50,59 @@ class Game {
         return await FetchManager.post('/api/set-creator', data)
     }
 
-    async getStackCardCount() {
-        return await FetchManager.get('/api/current-stack/' + this.id)
+  async getStackCardCount() {
+    return await FetchManager.get("/api/current-stack/" + this.id);
+  }
+
+  async getPlayers() {
+    return await FetchManager.get("/api/get-players/" + this.id);
+  }
+
+  async delete() {
+    return await FetchManager.get("/api/delete-game/" + this.id);
+  }
+
+  async start() {
+    const response = await FetchManager.get("/api/start-game/" + this.id);
+    if (response === true) {
+      const youngestPlayerId = await this.getYoungestPlayer();
+      if (youngestPlayerId !== null) {
+        await FetchManager.get("/api/give-turn-to/" + youngestPlayerId);
+      }
+    } else {
+      alert("An error occured");
+      exit();
+    }
+  }
+
+  async getYoungestPlayer() {
+    const players = await this.getPlayers();
+
+    if (players.length === 0) {
+      return null;
     }
 
-    async getPlayers() {
-        return await FetchManager.get('/api/get-players/' + this.id);
+    // Find the youngest players
+    let youngestPlayers = [players[0]];
+    for (const player of players.slice(1)) {
+      if (new Date(player.birthdate) > new Date(youngestPlayers[0].birthdate)) {
+        youngestPlayers = [player];
+      } else if (
+        new Date(player.birthdate).getTime() ===
+        new Date(youngestPlayers[0].birthdate).getTime()
+      ) {
+        youngestPlayers.push(player);
+      }
     }
 
-    async delete() {
-        return await FetchManager.get('/api/delete-game/' + this.id)
+    // If there are multiple youngest players, select one as random
+    if (youngestPlayers.length > 1) {
+      const randomIndex = Math.floor(Math.random() * youngestPlayers.length);
+      return youngestPlayers[randomIndex].id;
     }
 
-    async start() {
-        return await FetchManager.get('/api/start-game/' + this.id)
-    }
+    return youngestPlayers[0].id;
+  }
 }
 
 export default Game;
