@@ -51,6 +51,9 @@ class Game {
       if (youngestPlayerId !== null) {
         await FetchManager.get("/give-turn-to/" + youngestPlayerId);
       }
+    } else {
+      alert("An error occured");
+      exit();
     }
   }
 
