@@ -16,8 +16,26 @@ function showSubmit() {
         submitBtn.classList.remove('d-none')
     }
 }
+
+function calculateAge(birthday) {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+
+   
+    return age;
+}
+
 function isFormValid() {
-    return usernameInput.value !== '' && birthdayInput.value !== ''
+    const age = calculateAge(birthdayInput.value);
+    const isValid = usernameInput.value !== '' && birthdayInput.value !== '' && age >= 6;
+    
+    return isValid;
 }
 
 function checkIsSubmittable() {
@@ -25,10 +43,13 @@ function checkIsSubmittable() {
         formEl.addEventListener('input', () => {
             if (isFormValid()) {
                 showSubmit();
+            } else {
+                hideSubmit();
             }
-        })
+        });
     }
 }
+
 
 async function createGame() {
     const game = new Game();
