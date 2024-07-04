@@ -16,6 +16,8 @@ class Game {
       { x: 0, y: innerHeight * 0.35, rotation: 0 },
     ];
     this.deck = this.createDeck(64);
+    this.playerCards = [];
+    this.centerCards = [];
   }
 
   initialize() {
@@ -81,6 +83,45 @@ class Game {
       document.getElementById("carte23"),
       document.getElementById("carte24"),
     ];
+
+    this.playerCards = [
+      [
+        document.getElementById("carte1"),
+        document.getElementById("carte2"),
+        document.getElementById("carte3"),
+      ],
+      [
+        document.getElementById("carte4"),
+        document.getElementById("carte5"),
+        document.getElementById("carte6"),
+      ],
+      [
+        document.getElementById("carte7"),
+        document.getElementById("carte8"),
+        document.getElementById("carte9"),
+      ],
+      [
+        document.getElementById("carte10"),
+        document.getElementById("carte11"),
+        document.getElementById("carte12"),
+      ],
+      [
+        document.getElementById("carte13"),
+        document.getElementById("carte14"),
+        document.getElementById("carte15"),
+      ],
+      [
+        document.getElementById("carte16"),
+        document.getElementById("carte17"),
+        document.getElementById("carte18"),
+      ],
+      [
+        document.getElementById("carte19"),
+        document.getElementById("carte20"),
+        document.getElementById("carte21"),
+      ],
+      this.playerHand,
+    ];
   }
 
   addCardClickHandlers() {
@@ -103,6 +144,7 @@ class Game {
     });
 
     this.playerHand = this.playerHand.filter((c) => c !== card);
+    this.centerCards.push(card);
   }
 
   drawCard() {
@@ -110,7 +152,6 @@ class Game {
       const cardNumber = this.deck.pop();
       const newCard = document.createElement("div");
       newCard.classList.add("carte", "carte-mine");
-      newCard.textContent = `${cardNumber}`;
       document.body.appendChild(newCard);
       this.playerHand.push(newCard);
       this.addCardClickHandlers();
@@ -130,15 +171,69 @@ class Game {
           duration: 1,
           x: xPos,
           y: yPos,
-          rotation: 180,
+          rotation: 0,
           onStart: () => this.cardSound.play(),
         }
       );
     }
+  }
+
+  playCards(playerIndex, numberOfCards) {
+    const cardsToPlay = this.playerCards[playerIndex].slice(0, numberOfCards);
+    const initialX = this.centerX;
+    const initialY = this.centerY;
+
+    cardsToPlay.forEach((card, index) => {
+      const xPos = initialX + index * 120;
+      const yPos = initialY;
+
+      gsap.to(card, {
+        duration: 1,
+        x: xPos,
+        y: yPos,
+        rotation: 0,
+        delay: index * 0.2,
+        onStart: () => this.cardSound.play(),
+      });
+
+      this.playerCards[playerIndex] = this.playerCards[playerIndex].filter(
+        (c) => c !== card
+      );
+
+      this.centerCards.push(card);
+    });
+  }
+
+  collectCenterCards(playerIndex) {
+    const { x, y, rotation } = this.positions[playerIndex];
+    this.centerCards.forEach((card, index) => {
+      const xPos = this.centerX + x;
+      const yPos = this.centerY + y;
+      gsap.to(card, {
+        duration: 1,
+        x: xPos,
+        y: yPos,
+        rotation: rotation,
+        delay: index * 0.2,
+        onStart: () => this.cardSound.play(),
+        onComplete: () => card.remove(),
+      });
+    });
+
+    this.centerCards = [];
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const game = new Game();
   game.initialize();
+
+  document.addEventListener("keydown", (event) => {
+    if (event.code === "Space") {
+      game.playCards(2, 1);
+    }
+    if (event.code === "KeyC") {
+      game.collectCenterCards(0);
+    }
+  });
 });
