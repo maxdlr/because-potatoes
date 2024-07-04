@@ -86,10 +86,10 @@ function showStartButton() {
         startGameBtn.classList.remove('d-none')
     }
 
-    startGameBtn.addEventListener('click', () => {
+    startGameBtn.addEventListener('click', async () => {
+        await game.start()
         window.location.replace('/game/' + pinCode)
     })
-
 }
 
 async function watchPlayerCount() {
