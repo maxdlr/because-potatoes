@@ -18,15 +18,15 @@ class Stack {
     /**
      * @param number : number
      */
-    async addToStack(number) {
+    async updateCardCount(number) {
         this.cardCount = this.cardCount + number;
         const data = {
             cardCount: this.cardCount,
             gameId: this.game.id
         }
 
-        const response = await FetchManager.post('/add-to-stack', data)
-        await this.updateCardCount();
+        const response = await FetchManager.post('/update-stack-card-count', data)
+        await this.getCardCount();
         return response.message;
     }
 
@@ -38,12 +38,13 @@ class Stack {
     async resetStack(gameId) {
         this.cardCount = 0;
         const response = await FetchManager.get('/reset-stack/' + gameId);
-        await this.updateCardCount();
+        await this.getCardCount();
         return response.message;
     }
 
-    async updateCardCount() {
+    async getCardCount() {
         this.cardCount = await FetchManager.get('/api/current-stack/' + this.game.id);
+        return this.cardCount;
     }
 
 }

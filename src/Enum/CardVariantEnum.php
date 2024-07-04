@@ -11,5 +11,5 @@ enum CardIdentifierEnum: int
     case GLOVES = 5;
     case UNDERWEAR = 6;
     case CROWN = 7;
-    
+    case NOVARIANT = 8;
 } 

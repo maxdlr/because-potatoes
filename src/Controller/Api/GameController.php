@@ -13,13 +13,35 @@ use mysqli_sql_exception;
 class GameController extends AbstractController
 {
     private Repository $repository;
+    private Repository $playerGameRepository;
     private PinGenerator $pinGenerator;
 
     public function __construct()
     {
         parent::__construct();
         $this->repository = new Repository('game'); 
+        $this->playerGameRepository = new Repository('player_game');
         $this->pinGenerator = new PinGenerator();
+    }
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/get-players/{id}', name: 'api_get_players', httpMethod: ['GET'])]
+    public function getPlayers(int $id): string
+    {
+        try {
+            $playerGameRepository = new Repository('player_game');
+            $playerGames = $playerGameRepository->findBy(['gameId' => $id]);
+
+            $players = [];
+            $playerRepository = new Repository('player');
+            foreach ($playerGames as $playerGame) {
+                $players[] = $playerRepository->findOneBy(['id' => $playerGame['playerId']]);
+            }
+            return json_encode($players);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -30,7 +52,12 @@ class GameController extends AbstractController
     {
         try {
             $game = $this->repository->findOneBy(['sessionId' => $id]);
-            return json_encode(['game' => $game]);
+
+            if (null === $game) {
+                return json_encode('Game with sessionId' . $id . " doesn't exist");
+            }
+
+            return json_encode($game);
         } catch (mysqli_sql_exception $e) {
             return json_encode(['message' => $e->getMessage()]);
         }
@@ -43,6 +70,7 @@ class GameController extends AbstractController
     public function createGame(): string
     {
         $sessionId = $this->pinGenerator->generatePin();
+        $stackRepository = new Repository('stack');
 
         try {
             $inserted = $this->repository->insertOne(
@@ -52,8 +80,17 @@ class GameController extends AbstractController
                 ]
             );
 
+            $game = $this->repository->findOneBy(['sessionId' => $sessionId]);
+
+            $stackRepository->insertOne(
+                [
+                    'cardCount' => 0,
+                    'gameId' => $game['id']
+                ]
+            );
+
             if ($inserted !== false) {
-                return json_encode(['message' => true, 'sessionId' => $sessionId]);
+                return json_encode(['message' => true, 'game' => $game]);
             }
         } catch (mysqli_sql_exception $e) {
             return json_encode(['message' => $e->getMessage()]);
@@ -69,6 +106,11 @@ class GameController extends AbstractController
     public function startGame(int $id): string
     {
         $game = $this->repository->findOneBy(['id' => $id]);
+        $gamePlayers = $this->playerGameRepository->findBy(['gameId' => $id]);
+
+        if (count($gamePlayers) < 2) {
+            return json_encode(['message' => 'Cannot start game with less than 2 players']);
+        }
 
         if ($game !== null) {
 
@@ -85,6 +127,41 @@ class GameController extends AbstractController
         }
 
         return json_encode(['message' => 'Failed to start game'], JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/delete-game/{id}', name: 'api_delete_game', httpMethod: ['GET'])]
+    public function deleteGame(int $id): string
+    {
+        try {
+            $playerRepository = new Repository('player');
+            $stackRepository = new Repository('stack');
+            $gamePlayers = $this->playerGameRepository->findBy(['gameId' => $id]);
+
+            $this->playerGameRepository->delete(['gameId' => $id]);
+
+            foreach ($gamePlayers as $player) {
+                try {
+                    $playerRepository->delete(['id' => $player['playerId']]);
+                } catch (mysqli_sql_exception $e) {
+                    return json_encode(['message' => $e->getMessage()]);
+                }
+            }
+
+            try {
+                $stackRepository->delete(['gameId' => $id]);
+            } catch (mysqli_sql_exception $e) {
+                return json_encode(['message' => $e->getMessage()]);
+            }
+
+            $response = $this->repository->delete(['id' => $id]);
+
+            return json_encode(['message' => $response]);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
     }
 }
 

@@ -28,7 +28,6 @@ class Player {
     }
 
     async addToGame(gameId = 0) {
-
         const data = {
             username: this.username,
             age: this.age,
@@ -36,7 +35,10 @@ class Player {
         }
 
         const response = await FetchManager.post('/api/players/add-to-game', data);
-        this.id = response.player.id
+
+        if (response.player) {
+            this.id = response.player.id
+        }
 
         return response.message;
     }
