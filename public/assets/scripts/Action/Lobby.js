@@ -85,6 +85,11 @@ function showStartButton() {
     if (startGameBtn.classList.contains('d-none')) {
         startGameBtn.classList.remove('d-none')
     }
+
+    startGameBtn.addEventListener('click', () => {
+        window.location.replace('/game/' + pinCode)
+    })
+
 }
 
 async function watchPlayerCount() {

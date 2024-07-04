@@ -64,14 +64,14 @@ class Game {
 
   async start() {
     const response = await FetchManager.get("/api/start-game/" + this.id);
-    if (response === true) {
-      const youngestPlayerId = await this.getYoungestPlayer();
-      if (youngestPlayerId !== null) {
-        await FetchManager.get("/api/give-turn-to/" + youngestPlayerId);
+
+    if (response.message === true) {
+      const youngestPlayer = await this.getYoungestPlayer();
+      if (youngestPlayer !== null) {
+        await FetchManager.get("/api/give-turn-to/" + youngestPlayer.id);
       }
     } else {
-      alert("An error occured");
-      exit();
+      return response.message;
     }
   }
 
@@ -82,26 +82,10 @@ class Game {
       return null;
     }
 
-    // Find the youngest players
-    let youngestPlayers = [players[0]];
-    for (const player of players.slice(1)) {
-      if (new Date(player.birthdate) > new Date(youngestPlayers[0].birthdate)) {
-        youngestPlayers = [player];
-      } else if (
-        new Date(player.birthdate).getTime() ===
-        new Date(youngestPlayers[0].birthdate).getTime()
-      ) {
-        youngestPlayers.push(player);
-      }
-    }
-
-    // If there are multiple youngest players, select one as random
-    if (youngestPlayers.length > 1) {
-      const randomIndex = Math.floor(Math.random() * youngestPlayers.length);
-      return youngestPlayers[randomIndex].id;
-    }
-
-    return youngestPlayers[0].id;
+    const sortedByAgePlayers = players.sort((a, b) => {
+        return a.age.localeCompare(b.age)
+    })
+      return sortedByAgePlayers[0];
   }
 }
 
