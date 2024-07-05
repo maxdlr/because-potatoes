@@ -115,13 +115,17 @@ async function allowBecausePotatoes() {
 }
 
 async function doDeclareBecausePotatoes() {
+
+    console.log('stack', stack);
+    console.log('game', game);
+
+
     const declaration = await player.declareBecausePotatoes(stack.id, stack.cardCount);
     console.log('declarebp: ', declaration);
     if (!declaration) {
         alert('Because potatoes non-valide');
         return false;
     } else {
-        console.log(stack);
         await stack.resetStack();
         await game.gotoNextTurn();
         return true;
