@@ -123,9 +123,10 @@ async function leave() {
         setIsLoading();
 
         if (game.creatorId === player.id || players.count === 0) {
-            await game.delete();
+            console.log(await game.delete());
         }
         const deleted = await player.delete();
+        console.log(deleted)
         if (deleted) {
             localStorage.clear();
         }
@@ -137,7 +138,7 @@ function deletePlayerOnLeave() {
 
     quitGameBtn.addEventListener('click', async () => {
         if (await leave()) {
-            window.location.replace('/')
+            // window.location.replace('/')
         }
     })
 
