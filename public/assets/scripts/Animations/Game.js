@@ -4,6 +4,7 @@ class Game {
     // this.cardSound = document.getElementById("cardSound");
     this.centerX = window.innerWidth * 0.46;
     this.centerY = window.innerHeight * 0.39;
+    this.deckPositionX = this.centerX - window.innerWidth * 0.26; // Position initiale du deck
     this.playerHand = [];
     this.positions = [
       { x: -window.innerWidth * 0.16, y: -innerHeight * 0.47, rotation: 180 },
@@ -18,10 +19,12 @@ class Game {
     this.deck = this.createDeck(64);
     this.playerCards = [];
     this.centerCards = [];
+    this.firstCardX = null;
   }
 
   initialize() {
     this.positionPioche();
+    this.initialDraw();
     this.distribuerCartes();
     this.addCardClickHandlers();
     this.addPiocheClickHandler();
@@ -38,6 +41,37 @@ class Game {
   positionPioche() {
     this.pioche.style.left = `${this.centerX - window.innerWidth * 0.26}px`;
     this.pioche.style.top = `${this.centerY}px`;
+  }
+
+  initialDraw() {
+    if (this.deck.length > 0) {
+      const cardNumber = this.deck.pop();
+      const newCard = document.createElement("div");
+      newCard.classList.add("carte", "carte-center");
+      document.body.appendChild(newCard);
+
+      const xPos = this.deckPositionX + 150; // Augmenter l'espace à 150 pixels
+      const yPos = this.centerY; // Aligner verticalement avec la pioche
+      this.firstCardX = xPos;
+
+      gsap.fromTo(
+        newCard,
+        {
+          x: this.deckPositionX,
+          y: this.centerY,
+          rotation: 0,
+        },
+        {
+          duration: 1,
+          x: xPos,
+          y: yPos,
+          rotation: 0,
+          onStart: () => this.cardSound.play(),
+        }
+      );
+
+      this.centerCards.push(newCard);
+    }
   }
 
   distribuerCartes() {
@@ -127,7 +161,11 @@ class Game {
   addCardClickHandlers() {
     const playerCards = document.querySelectorAll(".carte-mine");
     playerCards.forEach((card) => {
-      card.addEventListener("click", () => this.moveCardToCenter(card));
+      card.addEventListener("click", () => {
+        if (this.playerHand.includes(card)) {
+          this.moveCardToCenter(card);
+        }
+      });
     });
   }
 
@@ -136,15 +174,27 @@ class Game {
   }
 
   moveCardToCenter(card) {
+    // Déterminer la prochaine position X pour la carte jouée
+    const nextX = this.firstCardX + this.centerCards.length * 120;
+
+    // Animer la carte vers la position déterminée
     gsap.to(card, {
       duration: 1,
-      x: this.centerX,
+      x: nextX,
       y: this.centerY,
       rotation: 0,
     });
 
+    // Retirer la carte jouée de this.playerHand
     this.playerHand = this.playerHand.filter((c) => c !== card);
+    // Ajouter la carte au centre (this.centerCards)
     this.centerCards.push(card);
+
+    // Réajuster les cartes restantes dans la main du joueur
+    this.adjustPlayerHand();
+
+    // Désactiver l'écouteur d'événements pour cette carte
+    card.removeEventListener("click", this.moveCardToCenter);
   }
 
   drawCard() {
@@ -157,13 +207,13 @@ class Game {
       this.addCardClickHandlers();
 
       const index = this.playerHand.length - 1;
-      const xPos = this.centerX + this.positions[7].x + (index - 1) * 120;
+      const xPos = this.firstCardX + index * 120;
       const yPos = this.centerY + this.positions[7].y;
 
       gsap.fromTo(
         newCard,
         {
-          x: this.centerX - window.innerWidth * 0.26,
+          x: this.deckPositionX,
           y: this.centerY,
           rotation: 0,
         },
@@ -180,7 +230,7 @@ class Game {
 
   playCards(playerIndex, numberOfCards) {
     const cardsToPlay = this.playerCards[playerIndex].slice(0, numberOfCards);
-    const initialX = this.centerX;
+    const initialX = this.firstCardX + this.centerCards.length * 120;
     const initialY = this.centerY;
 
     cardsToPlay.forEach((card, index) => {
@@ -201,6 +251,9 @@ class Game {
       );
 
       this.centerCards.push(card);
+
+      // Désactiver l'écoute des événements pour cette carte
+      card.removeEventListener("click", this.moveCardToCenter);
     });
   }
 
@@ -223,47 +276,18 @@ class Game {
     this.centerCards = [];
   }
 
-  refillCards(playerIndex, numCards) {
-    const maxHandSize = 3;
-    const playerHand = this.playerCards[playerIndex];
+  adjustPlayerHand() {
+    this.playerHand.forEach((card, index) => {
+      const xPos = this.firstCardX + index * 120;
+      const yPos = this.centerY + this.positions[7].y;
 
-    if (playerHand.length + numCards <= maxHandSize) {
-      for (let i = 0; i < numCards; i++) {
-        if (this.deck.length > 0) {
-          const cardNumber = this.deck.pop();
-          const newCard = document.createElement("div");
-          newCard.classList.add("carte", "carte-mine");
-          document.body.appendChild(newCard);
-
-          const index = playerHand.length;
-          const xPos =
-            this.centerX + this.positions[playerIndex].x + index * 30;
-          console.log(xPos);
-          const yPos = this.centerY + this.positions[playerIndex].y;
-
-          gsap.fromTo(
-            newCard,
-            {
-              x: this.centerX - window.innerWidth * 0.26,
-              y: this.centerY,
-              rotation: 0,
-            },
-            {
-              duration: 1,
-              x: xPos,
-              y: yPos,
-              rotation: this.positions[playerIndex].rotation,
-              // onStart: () => this.cardSound.play(),
-            }
-          );
-
-          playerHand.push(newCard);
-          this.addCardClickHandlers();
-        }
-      }
-    } else {
-      console.warn("Cannot refill cards: player hand will exceed maximum size");
-    }
+      gsap.to(card, {
+        duration: 1,
+        x: xPos,
+        y: yPos,
+        rotation: 0,
+      });
+    });
   }
 }
 
