@@ -24,16 +24,16 @@ function hydratePinCode() {
 
 async function getThisPlayer() {
 
-    if (!localStorage.getItem('playerId')) {
-        window.location.replace('/join-game/' + pinCode);
-    }
+    // if (!localStorage.getItem('playerId')) {
+    //     window.location.replace('/join-game/' + pinCode);
+    // }
 
     const playerId = localStorage.getItem('playerId');
     player = await player.getPlayerById(playerId);
 
-    if (!player) {
-        window.location.replace('/join-game/' + pinCode);
-    }
+    // if (!player) {
+    //     window.location.replace('/join-game/' + pinCode);
+    // }
 
     return player;
 }
