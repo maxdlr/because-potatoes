@@ -71,8 +71,6 @@ class Game {
 
     const fetchedPlayers = await FetchManager.get("/api/get-players/" + this.id);
 
-      console.log(fetchedPlayers);
-
     const players = [];
 
       for (const fetchedPlayer of fetchedPlayers) {

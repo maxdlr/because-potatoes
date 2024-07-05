@@ -81,17 +81,24 @@ function watchStack() {
 function watchTurn() {
     setInterval(async () => {
         const isPlayerTurn = await player.isMyTurn();
+        console.log('is my turn: ', isPlayerTurn);
         game = await game.getGame(pinCode);
-        if (isPlayerTurn == 1) {
+        if (isPlayerTurn == true) {
+            console.log('i can declare bp')
             await allowBecausePotatoes();
         } else {
+            console.log('i cannot declare bp')
+
             await forbidBecausePotatoes();
             const currentTurn = game.turn;
             const players = await getGamePlayers();
 
             for (let i = 0; i < players.length; i++) {
+
+                console.log('turn number = player key: ', i === currentTurn && await players[i].isMyTurn() == false)
+
                 if (i === currentTurn && await players[i].isMyTurn() == false) {
-                    console.log(await players[i].setIsPlaying());
+                    console.log('is now my turn: ', await players[i].setIsPlaying());
                 }
             }
         }
@@ -109,7 +116,7 @@ async function allowBecausePotatoes() {
 
 async function doDeclareBecausePotatoes() {
     const declaration = await player.declareBecausePotatoes(stack.id, stack.cardCount);
-    console.log(declaration);
+    console.log('declarebp: ', declaration);
     if (!declaration) {
         alert('Because potatoes non-valide');
         return false;
