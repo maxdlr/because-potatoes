@@ -22,7 +22,6 @@ class Player {
     async getPlayerById(id) {
         this.id = id;
         const player = await FetchManager.get('/api/players/' + id);
-        console.log(localStorage)
 
         if (!player) {
             return false;

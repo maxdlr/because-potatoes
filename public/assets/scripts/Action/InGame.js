@@ -35,6 +35,7 @@ async function leave() {
 
     if (confirmBeforeLeave) {
         if (game.creatorId) {
+            localStorage.clear();
             await game.delete();
         }
     }
