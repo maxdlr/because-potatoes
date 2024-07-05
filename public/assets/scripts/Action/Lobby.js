@@ -24,16 +24,16 @@ function hydratePinCode() {
 
 async function getThisPlayer() {
 
-    // if (!localStorage.getItem('playerId')) {
-    //     window.location.replace('/join-game/' + pinCode);
-    // }
+    if (!localStorage.getItem('playerId')) {
+        window.location.replace('/join-game/' + pinCode);
+    }
 
     const playerId = localStorage.getItem('playerId');
     player = await player.getPlayerById(playerId);
 
-    // if (!player) {
-    //     window.location.replace('/join-game/' + pinCode);
-    // }
+    if (!player) {
+        window.location.replace('/join-game/' + pinCode);
+    }
 
     return player;
 }
@@ -52,9 +52,9 @@ async function getGamePlayers() {
 async function hydratePlayers() {
     const players = await getGamePlayers();
 
-    // if (players.count === 0) {
-    //     window.location.replace('/join-game')
-    // }
+    if (players.count === 0) {
+        window.location.replace('/join-game')
+    }
 
     playerCountEl.innerText = players.count + '/8 joueurs';
 
@@ -138,7 +138,7 @@ function deletePlayerOnLeave() {
 
     quitGameBtn.addEventListener('click', async () => {
         if (await leave()) {
-            // window.location.replace('/')
+            window.location.replace('/')
         }
     })
 
