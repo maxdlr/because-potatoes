@@ -68,7 +68,7 @@ function watchPlayers() {
 function watchTurn() {
     setInterval(async () => {
         console.log(player.isMyTurn())
-    })
+    }, 5000)
 }
 
 
