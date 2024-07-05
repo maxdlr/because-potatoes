@@ -41,7 +41,6 @@ class GameController extends AbstractController
             $players = [];
             foreach ($playerGames as $playerGame) {
                 $players[] = $this->playerRepository->findOneBy(['id' => $playerGame['playerId']]);
-                $players[] = $this->playerRepository->findOneBy(['id' => $playerGame['playerId']]);
             }
             return json_encode($players);
         } catch (mysqli_sql_exception $e) {
