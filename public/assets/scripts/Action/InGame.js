@@ -121,6 +121,7 @@ async function doDeclareBecausePotatoes() {
         alert('Because potatoes non-valide');
         return false;
     } else {
+        console.log(stack);
         await stack.resetStack();
         await game.gotoNextTurn();
         return true;
