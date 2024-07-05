@@ -75,4 +75,5 @@ function watchTurn() {
 
 allowQuit()
 watchPlayers();
+watchTurn();
 console.log(getPinCode())
