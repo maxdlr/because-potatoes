@@ -14,12 +14,14 @@ class PlayerController extends AbstractController
 {
     private Repository $playerRepository;
     private Repository $playerGameRepository;
+    private Repository $stackRepository;
 
     public function __construct()
     {
         parent::__construct();
         $this->playerRepository = new Repository('player');
         $this->playerGameRepository = new Repository('player_game');
+        $this->stackRepository = new Repository('stack');
     }
 
     /**
@@ -125,6 +127,29 @@ class PlayerController extends AbstractController
 
         return json_encode(['message' => $playerDeleted]);
     }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/add-points', name: 'api_add_points', httpMethod: ['POST'])]
+    public function addPoints(): string
+    {
+        $data = RequestManager::getPostBodyAsArray();
+
+        foreach (['playerId', 'points'] as $key) {
+            if (!in_array($key, array_keys($data)))
+                return json_encode(['message' => $key . ' missing;']);
+        }
+
+        $currentPoints = $this->playerGameRepository->findOneBy(['playerId' => $data['playerId']])['points'];
+
+        $response = $this->playerGameRepository->update(
+            ['points' => $data['points'] + $currentPoints],
+            ['id' => $data['stackId']]
+        );
+
+        return json_encode(['message' => $response]);
+    }
     
     /**
      * @throws Exception
@@ -139,16 +164,4 @@ class PlayerController extends AbstractController
             return json_encode(['message' => $e->getMessage()]);
         }
     }
-
-    #[Route(uri: '/api/getPointsPlayers/{id}', name: 'api_get_points_player', httpMethod: ['GET'])]
-    public function getPointsPlayer(int $id): string|false
-    {
-        try {
-            $playerGame = $this->playerGameRepository->findOneBy(['playerId' => $id]);
-            return json_encode(['points' => $playerGame['points']]);
-        } catch (mysqli_sql_exception|Exception $e) {
-            return json_encode(['message' => $e->getMessage()]);
-        }
-    }
-
 }

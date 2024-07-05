@@ -16,6 +16,7 @@ class GameController extends AbstractController
     private Repository $repository;
     private Repository $playerGameRepository;
     private Repository $playerRepository;
+    private Repository $stackRepository;
     private PinGenerator $pinGenerator;
 
     public function __construct()
@@ -24,6 +25,7 @@ class GameController extends AbstractController
         $this->repository = new Repository('game'); 
         $this->playerGameRepository = new Repository('player_game');
         $this->playerRepository = new Repository('player');
+        $this->stackRepository = new Repository('stack');
         $this->pinGenerator = new PinGenerator();
     }
     /**
@@ -38,6 +40,7 @@ class GameController extends AbstractController
 
             $players = [];
             foreach ($playerGames as $playerGame) {
+                $players[] = $this->playerRepository->findOneBy(['id' => $playerGame['playerId']]);
                 $players[] = $this->playerRepository->findOneBy(['id' => $playerGame['playerId']]);
             }
             return json_encode($players);
@@ -72,7 +75,7 @@ class GameController extends AbstractController
     public function createGame(): string
     {
         $sessionId = $this->pinGenerator->generatePin();
-        $stackRepository = new Repository('stack');
+        $this->stackRepository = new Repository('stack');
 
         try {
             $inserted = $this->repository->insertOne(
@@ -84,7 +87,7 @@ class GameController extends AbstractController
 
             $game = $this->repository->findOneBy(['sessionId' => $sessionId]);
 
-            $stackRepository->insertOne(
+            $this->stackRepository->insertOne(
                 [
                     'cardCount' => 0,
                     'gameId' => $game['id']
@@ -138,13 +141,21 @@ class GameController extends AbstractController
     public function deleteGame(int $id): string
     {
         try {
-            $stackRepository = new Repository('stack');
+            $this->playerRepository = new Repository('player');
             $gamePlayers = $this->playerGameRepository->findBy(['gameId' => $id]);
 
             $this->playerGameRepository->delete(['gameId' => $id]);
 
+            foreach ($gamePlayers as $player) {
+                try {
+                    $this->playerRepository->delete(['id' => $player['playerId']]);
+                } catch (mysqli_sql_exception $e) {
+                    return json_encode(['message' => $e->getMessage()]);
+                }
+            }
+
             try {
-                $stackRepository->delete(['gameId' => $id]);
+                $this->stackRepository->delete(['gameId' => $id]);
             } catch (mysqli_sql_exception $e) {
                 return json_encode(['message' => $e->getMessage()]);
             }
@@ -215,5 +226,28 @@ class GameController extends AbstractController
 
     }
 
-}
 
+    
+    #[Route(uri: '/api/update-card-count', name: 'api_update_card_count', httpMethod: ['POST'])]
+    public function updateCardCount(): string
+    {
+        $data = RequestManager::getPostBodyAsArray();
+    
+        foreach (['stackId', 'cardCount'] as $key) {
+            if (!in_array($key, array_keys($data)))
+                return json_encode(['message' => $key . ' missing;']);
+        }
+
+        try {
+
+            $updated = $this->stackRepository->update(
+                ['cardCount' => $data['cardCount']],
+                ['gameId' => $data['gameId']]
+            );
+
+            return json_encode(['message' => $updated]);
+        } catch (Exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+}

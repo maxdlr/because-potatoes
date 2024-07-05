@@ -3,53 +3,50 @@
 import FetchManager from "../Service/FetchManager.js";
 
 class Stack {
-  game;
-  cardCount;
+    id;
+    game;
+    cardCount;
 
-  /**
-   * @param game : Game
-   */
-  constructor(game) {
-    this.game = game;
-    this.cardCount = 0;
-  }
+    /**
+     * @param game : Game
+     */
+    async constructor(game) {
+        this.game = game;
+        await this.getStack();
+    }
 
-  /**
-   * @param number : number
-   */
-  async updateCardCount(number) {
-    this.cardCount = this.cardCount + number;
-    const data = {
-      cardCount: this.cardCount,
-      gameId: this.game.id,
-    };
+    async getStack() {
+        const stack = await FetchManager.get('/api/current-stack/' + this.game.id);
 
-    const response = await FetchManager.post(
-      "/api/update-stack-card-count",
-      data
-    );
-    await this.getCardCount();
-    return response.message;
-  }
+        this.id = stack.id;
+        this.cardCount = stack.cardCount;
 
-  /**
-   *
-   * @param gameId : int
-   * @returns {Promise<*>}
-   */
-  async resetStack(gameId) {
-    this.cardCount = 0;
-    const response = await FetchManager.get("/api/reset-stack/" + gameId);
-    await this.getCardCount();
-    return response.message;
-  }
+        return this;
+    }
 
-  async getCardCount() {
-    this.cardCount = await FetchManager.get(
-      "/api/current-stack/" + this.game.id
-    );
-    return this.cardCount;
-  }
+    /**
+     * @param number : number
+     */
+    async updateCardCount(number) {
+        this.cardCount = this.cardCount + number;
+        const data = {
+            cardCount: this.cardCount,
+            gameId: this.id
+        }
+        const response = await FetchManager.post('/api/update-card-count', data)
+        return response.message;
+    }
+
+    /**
+     *
+     * @param gameId : int
+     * @returns {Promise<*>}
+     */
+    async resetStack(gameId) {
+        this.cardCount = 0;
+        const response = await FetchManager.get('/reset-stack/' + gameId);
+        return response.message;
+    }
 }
 
 export default Stack;
