@@ -63,10 +63,6 @@ class Game {
         return await FetchManager.post('/api/set-creator', data)
     }
 
-  async getStackCardCount() {
-    return await FetchManager.get("/api/current-stack/" + this.id);
-  }
-
   async getPlayers() {
 
     const fetchedPlayers = await FetchManager.get("/api/get-players/" + this.id);
