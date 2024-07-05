@@ -75,6 +75,10 @@ class Player {
     async isMyTurn() {
         return await FetchManager.get('/api/is-my-turn/' + this.id)
     }
+
+    async setIsPlaying() {
+        return await FetchManager.get('/api/set-is-playing/' + this.id)
+    }
 }
 
 /**

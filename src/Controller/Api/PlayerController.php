@@ -179,4 +179,18 @@ class PlayerController extends AbstractController
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/set-is-playing/{id}', name: 'api_set_is_playing', httpMethod: ['GET'])]
+    public function setIsPlaying(int $id): string
+    {
+        try {
+            $response = $this->playerGameRepository->update(['isPlaying' => true],['playerId' => $id]);
+            return json_encode($response);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
 }

@@ -243,4 +243,24 @@ class GameController extends AbstractController
             return json_encode(['message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/go-to-next-turn/{id}', name: 'api_go_to_next_turn', httpMethod: ['GET'])]
+    public function goToNextTurn(int $id): string
+    {
+        try {
+            $currentTurn = $this->repository->findOneBy(['id' => $id])['turn'];
+
+            $response = $this->repository->update(
+                ['turn' => $currentTurn + 1],
+                ['id' => $id]
+            );
+
+            return json_encode(['message' => $response]);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
 }

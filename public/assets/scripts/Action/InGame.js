@@ -1,5 +1,6 @@
 import Game from "../Class/Game.js";
 import Player from "../Class/Player.js";
+import Stack from "../Class/Stack.js";
 
 console.log('in game !!')
 
@@ -12,6 +13,9 @@ await game.getGame(getPinCode());
 
 let player = new Player();
 player = await getThisPlayer();
+
+let stack = new Stack(game);
+stack.cardCount = 30;
 
 function getPinCode() {
     const match = pinCode.match(/[0-9]{8}/);
@@ -67,24 +71,67 @@ function watchPlayers() {
     }, 5000)
 }
 
+function watchStack() {
+    setInterval(async () => {
+        await stack.getStack();
+    }, 5000)
+}
+
 function watchTurn() {
     setInterval(async () => {
         const isPlayerTurn = await player.isMyTurn();
+        game = await game.getGame(pinCode);
         if (isPlayerTurn == 1) {
+            await allowBecausePotatoes();
+        } else {
+            await forbidBecausePotatoes();
+            const currentTurn = game.turn;
+            const players = await getGamePlayers();
 
+            for (let i = 0; i < players.length; i++) {
+                if (i === currentTurn && await players[i].isMyTurn() == false) {
+                    console.log(await players[i].setIsPlaying());
+                }
+            }
         }
     }, 5000)
 }
 
-// function allowBecausePotatoes() {
-//     becausePotatoesButton.addEventListener('click', () => {
-//
-//     })
-// }
+async function allowBecausePotatoes() {
+
+    if (becausePotatoesButton.classList.contains('d-none')) {
+        becausePotatoesButton.classList.remove('d-none')
+    }
+
+    becausePotatoesButton.addEventListener('click', await doDeclareBecausePotatoes)
+}
+
+async function doDeclareBecausePotatoes() {
+    const declaration = await player.declareBecausePotatoes(stack.id, stack.cardCount);
+    console.log(declaration);
+    if (!declaration) {
+        alert('Because potatoes non-valide');
+        return false;
+    } else {
+        await stack.resetStack();
+        await game.gotoNextTurn();
+        return true;
+    }
+}
+
+async function forbidBecausePotatoes() {
+
+    if (!becausePotatoesButton.classList.contains('d-none')) {
+        becausePotatoesButton.classList.add('d-none')
+    }
+
+    becausePotatoesButton.removeEventListener('click', await doDeclareBecausePotatoes)
+}
 
 
 
 allowQuit()
 watchPlayers();
 watchTurn();
-console.log(getPinCode())
+watchStack();
+getPinCode();

@@ -112,6 +112,11 @@ class Game {
     })
       return sortedByAgePlayers[0];
   }
+
+  async gotoNextTurn() {
+        const response = await FetchManager.get('/go-to-next-turn/' + this.id)
+        return response.message;
+  }
 }
 
 export default Game;

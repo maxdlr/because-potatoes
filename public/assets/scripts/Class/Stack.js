@@ -42,9 +42,9 @@ class Stack {
      * @param gameId : int
      * @returns {Promise<*>}
      */
-    async resetStack(gameId) {
+    async resetStack() {
         this.cardCount = 0;
-        const response = await FetchManager.get('/reset-stack/' + gameId);
+        const response = await FetchManager.get('/reset-stack/' + this.game.id);
         return response.message;
     }
 }
