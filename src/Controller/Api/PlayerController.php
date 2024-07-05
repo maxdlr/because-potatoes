@@ -150,7 +150,7 @@ class PlayerController extends AbstractController
 
         return json_encode(['message' => $response]);
     }
-    
+
     /**
      * @throws Exception
      */
@@ -158,10 +158,39 @@ class PlayerController extends AbstractController
     public function giveTurnTo(int $id): string
     {
         try {
-            $this->playerRepository->update(['isPlaying' => true], ['id' => $id]);
+            $this->playerGameRepository->update(['isPlaying' => true], ['playerId' => $id]);
             return json_encode(['message' => 'Turn given to player (ID ' . $id. ')']);
         } catch (mysqli_sql_exception|Exception $e) {
             return json_encode(['message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/is-my-turn/{id}', name: 'api_is_my_turn', httpMethod: ['GET'])]
+    public function isMyTurn(int $id): string
+    {
+        try {
+            $response = $this->playerGameRepository->findOneBy(['playerId' => $id]);
+            return json_encode($response['isPlaying']);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/set-is-playing/{id}', name: 'api_set_is_playing', httpMethod: ['GET'])]
+    public function setIsPlaying(int $id): string
+    {
+        try {
+            $response = $this->playerGameRepository->update(['isPlaying' => true],['playerId' => $id]);
+            return json_encode($response);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
 }

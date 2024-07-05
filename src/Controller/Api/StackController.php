@@ -67,7 +67,7 @@ class StackController extends AbstractController
         if ($game !== null) {
             try {
                 $stack = $this->stackRepository->findOneBy(['gameId' => $id]);
-                return json_encode($stack['cardCount']);
+                return json_encode($stack);
             } catch (mysqli_sql_exception $e) {
                 return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
             }
