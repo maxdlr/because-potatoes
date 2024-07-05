@@ -37,7 +37,7 @@ class HomeController extends AbstractController
         return file_get_contents('./public/templates/lobby.html');
     }
 
-    #[Route(uri: "/game", name: "app_game", httpMethod: ["GET"])]
+    #[Route(uri: "/game/{id}", name: "app_game", httpMethod: ["GET"])]
     public function game(): string
     {
         return file_get_contents('./public/templates/game.html');

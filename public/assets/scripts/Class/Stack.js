@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 import FetchManager from "../Service/FetchManager.js";
 

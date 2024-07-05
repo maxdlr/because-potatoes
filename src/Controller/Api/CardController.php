@@ -1,12 +1,11 @@
 <?php
 namespace App\Controller\Api;
+
 use App\Attribute\Route;
 use App\Controller\AbstractController;
 use App\Service\DB\Repository;
-
 use App\Service\RequestManager\RequestManager;
 use Exception;
-use JsonException;
 use mysqli_sql_exception;
 use function PHPUnit\Framework\isEmpty;
 
@@ -63,7 +62,7 @@ class CardController extends AbstractController
      }
      
 
-    #[Route(uri: '/card/{id}', name: 'get_card', httpMethod: ['GET'])]
+    #[Route(uri: '/api/card/{id}', name: 'get_card', httpMethod: ['GET'])]
     public function getCard(int $id): string|false
     {
         try {
@@ -75,10 +74,21 @@ class CardController extends AbstractController
         }
     }
 
+    
     /**
      * @throws Exception
      */
-    #[Route(uri: '/add-card-to-stack', name: 'add_card_to_stack', httpMethod: ['POST'])]
+    #[Route(uri: '/api/allCards', name: 'api_get_all_cards', httpMethod: ['GET'])]
+    public function getAllCards(): false|string
+    {
+        $cards = $this->repository->findAll();
+        return json_encode($cards);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/add-card-to-stack', name: 'add_card_to_stack', httpMethod: ['POST'])]
     public function addCardToStack(): string
     {
         $data = RequestManager::getPostBodyAsArray();

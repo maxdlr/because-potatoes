@@ -23,7 +23,7 @@ class StackController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/update-stack-card-count', name: 'api_update_stack_card_count', httpMethod: ['POST'])]
+    #[Route(uri: '/api/update-stack-card-count', name: 'api_update_stack_card_count', httpMethod: ['POST'])]
     public function updateStackCardCount(): string
     {
         $data = RequestManager::getPostBodyAsArray();
@@ -44,7 +44,7 @@ class StackController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(uri: '/reset-stack/{id}', name: 'app_reset_stack', httpMethod: ['GET'])]
+    #[Route(uri: '/api/reset-stack/{id}', name: 'app_reset_stack', httpMethod: ['GET'])]
     public function resetStack(int $id): string
     {
         $response = $this->stackRepository->update(

@@ -43,7 +43,15 @@
             </div>
         </div>
         <div>
-        <button id="start-game" class="cta border border-0 d-none mt-5 mx-auto">Start</button>
+            <div class="d-flex justify-content-center align-items-center">
+                <button id="start-game" class="cta border border-0 d-none m-5 mx-auto">Start</button>
+                <div class="cta d-none m-5 mx-auto" id="loadingSpinner">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <button id="quit-game" class="cta border border-0 m-5 mx-auto">Quitter</button>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
