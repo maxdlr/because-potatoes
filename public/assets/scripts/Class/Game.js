@@ -1,6 +1,7 @@
 "use strict";
 
 import FetchManager from "../Service/FetchManager.js";
+import Player from "./Player.js";
 
 class Game {
     id;
@@ -21,6 +22,18 @@ class Game {
         this.isActive = isActive;
         this.turn = turn;
         this.creatorId = creatorId
+    }
+
+    async getGame(sessionId) {
+        const fetchedGame = await FetchManager.get('/api/get-game-by-session-id/' + sessionId)
+
+        this.id = fetchedGame.id
+        this.sessionId = fetchedGame.sessionId
+        this.isActive = fetchedGame.isActive
+        this.turn = fetchedGame.turn
+        this.creatorId = fetchedGame.creatorId
+
+        return this;
     }
 
     /**
@@ -50,12 +63,16 @@ class Game {
         return await FetchManager.post('/api/set-creator', data)
     }
 
-  async getStackCardCount() {
-    return await FetchManager.get("/api/current-stack/" + this.id);
-  }
-
   async getPlayers() {
-    return await FetchManager.get("/api/get-players/" + this.id);
+
+    const fetchedPlayers = await FetchManager.get("/api/get-players/" + this.id);
+
+    const players = [];
+
+      for (const fetchedPlayer of fetchedPlayers) {
+          players.push(new Player(fetchedPlayer['username'], null, fetchedPlayer['id'], fetchedPlayer['age']))
+      }
+    return players;
   }
 
   async delete() {
@@ -66,9 +83,11 @@ class Game {
     const response = await FetchManager.get("/api/start-game/" + this.id);
 
     if (response.message === true) {
+        this.isActive = true;
       const youngestPlayer = await this.getYoungestPlayer();
+
       if (youngestPlayer !== null) {
-        await FetchManager.get("/api/give-turn-to/" + youngestPlayer.id);
+        console.log(await FetchManager.get("/api/give-turn-to/" + youngestPlayer.id));
       }
     } else {
       return response.message;
@@ -86,6 +105,11 @@ class Game {
         return a.age.localeCompare(b.age)
     })
       return sortedByAgePlayers[0];
+  }
+
+  async gotoNextTurn() {
+        const response = await FetchManager.get('/go-to-next-turn/' + this.id)
+        return response.message;
   }
 }
 

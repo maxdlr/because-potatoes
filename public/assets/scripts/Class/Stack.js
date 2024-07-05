@@ -10,9 +10,8 @@ class Stack {
     /**
      * @param game : Game
      */
-    async constructor(game) {
+    constructor(game) {
         this.game = game;
-        await this.getStack();
     }
 
     async getStack() {
@@ -39,12 +38,11 @@ class Stack {
 
     /**
      *
-     * @param gameId : int
      * @returns {Promise<*>}
      */
-    async resetStack(gameId) {
+    async resetStack() {
         this.cardCount = 0;
-        const response = await FetchManager.get('/reset-stack/' + gameId);
+        const response = await FetchManager.get('/reset-stack/' + this.game.id);
         return response.message;
     }
 }

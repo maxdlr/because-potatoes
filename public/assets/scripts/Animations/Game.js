@@ -1,7 +1,7 @@
 class Game {
   constructor() {
     this.pioche = document.getElementById("pioche");
-    this.cardSound = document.getElementById("cardSound");
+    // this.cardSound = document.getElementById("cardSound");
     this.centerX = window.innerWidth * 0.46;
     this.centerY = window.innerHeight * 0.39;
     this.deckPositionX = this.centerX - window.innerWidth * 0.26; // Position initiale du deck
@@ -106,7 +106,7 @@ class Game {
             y: yPos,
             rotation: this.positions[i].rotation,
             delay: delay,
-            onStart: () => this.cardSound.play(),
+            // onStart: () => this.cardSound.play(),
           }
         );
       }
@@ -222,7 +222,7 @@ class Game {
           x: xPos,
           y: yPos,
           rotation: 0,
-          onStart: () => this.cardSound.play(),
+          // onStart: () => this.cardSound.play(),
         }
       );
     }
@@ -243,7 +243,7 @@ class Game {
         y: yPos,
         rotation: 0,
         delay: index * 0.2,
-        onStart: () => this.cardSound.play(),
+        // onStart: () => this.cardSound.play(),
       });
 
       this.playerCards[playerIndex] = this.playerCards[playerIndex].filter(
@@ -268,7 +268,7 @@ class Game {
         y: yPos,
         rotation: rotation,
         delay: index * 0.2,
-        onStart: () => this.cardSound.play(),
+        // onStart: () => this.cardSound.play(),
         onComplete: () => card.remove(),
       });
     });

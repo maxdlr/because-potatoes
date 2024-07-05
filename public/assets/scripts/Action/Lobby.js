@@ -12,10 +12,11 @@ const quitGameBtn = document.getElementById("quit-game");
 const copyBtn = document.getElementById("copy");
 const loadingSpinner = document.getElementById("loadingSpinner");
 
-let game = null;
-let player = new Player();
-
 const pinCode = window.location.pathname.replace("/lobby/", "");
+
+let game = new Game();
+await game.getGame(pinCode);
+let player = new Player();
 
 function hydratePinCode() {
   pinCodeEl.innerText = pinCode;
@@ -34,24 +35,6 @@ async function getThisPlayer() {
   }
 
   return player;
-}
-
-async function getGame() {
-  const fetchedGame = await FetchManager.get(
-    "/api/get-game-by-session-id/" + pinCode
-  );
-
-  if (typeof fetchedGame !== "object") {
-    window.location.replace("/join-game");
-  }
-
-  game = new Game(
-    fetchedGame.id,
-    fetchedGame.sessionId,
-    fetchedGame.isActive,
-    fetchedGame.turn,
-    fetchedGame.creatorId
-  );
 }
 
 async function getGamePlayers() {
@@ -83,12 +66,14 @@ async function hydratePlayers() {
 }
 
 function showStartButton() {
-  if (startGameBtn.classList.contains("d-none")) {
-    startGameBtn.classList.remove("d-none");
+  if (player.id === game.creatorId) {
+    if (startGameBtn.classList.contains("d-none")) {
+      startGameBtn.classList.remove("d-none");
+    }
   }
 
-  startGameBtn.addEventListener("click", () => {
-    window.location.replace("/game/" + pinCode);
+  startGameBtn.addEventListener("click", async () => {
+    await game.start();
   });
 }
 
@@ -98,7 +83,13 @@ async function watchPlayerCount() {
     if (players.count === 8) {
       clearInterval(playerCountInterval);
     }
-    if (players.count > 2 && players.count <= 8) {
+    if (players.count >= 2 && players.count <= 8) {
+      await game.getGame(pinCode);
+      console.log(game.isActive);
+      if (game.isActive == true) {
+        window.location.replace("/game/" + pinCode);
+      }
+
       showStartButton();
     }
   }, 2000);
@@ -118,9 +109,6 @@ function copyGameUrl() {
       window.location.origin + "/join-game/" + pinCode
     );
     copyBtn.innerText = "Lien copié !";
-    setTimeout(() => {
-      copyBtn.innerText = "Lien";
-    }, 3000);
   });
 }
 
@@ -134,9 +122,10 @@ async function leave() {
     setIsLoading();
 
     if (game.creatorId === player.id || players.count === 0) {
-      await game.delete();
+      console.log(await game.delete());
     }
     const deleted = await player.delete();
+    console.log(deleted);
     if (deleted) {
       localStorage.clear();
     }
@@ -176,7 +165,6 @@ function unSetIsLoading() {
 }
 
 await getThisPlayer();
-await getGame();
 hydratePinCode();
 await watchPlayerCount();
 copyGameUrl();

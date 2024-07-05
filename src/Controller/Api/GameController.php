@@ -41,7 +41,6 @@ class GameController extends AbstractController
             $players = [];
             foreach ($playerGames as $playerGame) {
                 $players[] = $this->playerRepository->findOneBy(['id' => $playerGame['playerId']]);
-                $players[] = $this->playerRepository->findOneBy(['id' => $playerGame['playerId']]);
             }
             return json_encode($players);
         } catch (mysqli_sql_exception $e) {
@@ -110,28 +109,22 @@ class GameController extends AbstractController
     #[Route(uri: '/api/start-game/{id}', name: 'api_start_game', httpMethod: ['GET'])]
     public function startGame(int $id): string
     {
-        $game = $this->repository->findOneBy(['id' => $id]);
         $gamePlayers = $this->playerGameRepository->findBy(['gameId' => $id]);
 
         if (count($gamePlayers) < 2) {
             return json_encode(['message' => 'Cannot start game with less than 2 players']);
         }
 
-        if ($game !== null) {
+        try {
+            $response = $this->repository->update(
+                ['isActive' => true],
+                ['id' => $id]
+            );
 
-            try {
-                $response = $this->repository->update(
-                    ['isActive' => true,],
-                    ['id' => $id]
-                );
-
-                return json_encode(['message' => $response]);
-            } catch (mysqli_sql_exception $e) {
-                return json_encode(['message' => $e->getMessage()], JSON_THROW_ON_ERROR);
-            }
+            return json_encode(['message' => $response]);
+        } catch (mysqli_sql_exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
         }
-
-        return json_encode(['message' => 'Failed to start game'], JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -247,6 +240,26 @@ class GameController extends AbstractController
 
             return json_encode(['message' => $updated]);
         } catch (Exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/go-to-next-turn/{id}', name: 'api_go_to_next_turn', httpMethod: ['GET'])]
+    public function goToNextTurn(int $id): string
+    {
+        try {
+            $currentTurn = $this->repository->findOneBy(['id' => $id])['turn'];
+
+            $response = $this->repository->update(
+                ['turn' => $currentTurn + 1],
+                ['id' => $id]
+            );
+
+            return json_encode(['message' => $response]);
+        } catch (mysqli_sql_exception $e) {
             return json_encode(['message' => $e->getMessage()]);
         }
     }

@@ -6,21 +6,23 @@ class Player {
     id = null;
     username = '';
     age = 0;
+    birthday = null;
 
     constructor(
         username = '',
-        birthday = '',
+        birthday = null,
         id = null,
+        age = null
     ) {
         this.id = id;
         this.username = username;
-        this.age = this.calculateAgeFromBirthday(birthday);
+        this.age = age ? age : birthday ? this.calculateAgeFromBirthday(birthday) : null;
+        this.birthday = birthday;
     }
 
     async getPlayerById(id) {
         this.id = id;
         const player = await FetchManager.get('/api/players/' + id);
-        console.log(localStorage)
 
         if (!player) {
             return false;
@@ -57,7 +59,7 @@ class Player {
         const response = await FetchManager.get('/api/remove-player/' + this.id);
         return response.message;
     }
-    
+
     async declareBecausePotatoes(stackId, points) {
         const data = {
             playerId: this.id,
@@ -67,9 +69,19 @@ class Player {
         if (await isDeclarePotatoesValid(stackId)) {
             return await FetchManager.post('/add-points', data);
         }
-
         return false;
+    }
+
+    async isMyTurn() {
+        return await FetchManager.get('/api/is-my-turn/' + this.id)
+    }
+
+    async setIsPlaying() {
+        return await FetchManager.get('/api/set-is-playing/' + this.id)
     }
 }
 
+/**
+ * Il faut ajouter ça pour que la classe Player soit accessible partout.
+ */
 export default Player;
