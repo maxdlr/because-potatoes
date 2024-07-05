@@ -14,6 +14,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   height: 100vh;
+  overflow: hidden;
 }
 
 .cta {
@@ -21,7 +22,7 @@ body {
   padding: 10px 45px;
   text-decoration: none;
   font-family: "RubykOne";
-  font-size: 40px;
+  font-size: 30px;
   color: white;
   background: #664680;
   transition: 1s;
@@ -61,5 +62,6 @@ body {
   border-radius: 8px;
   backdrop-filter: blur(14px);
   background-color: rgba(255, 255, 255, 0.2);
-  padding: 50px;
+  padding-right: 50px;
+  padding-left: 50px;
 }
