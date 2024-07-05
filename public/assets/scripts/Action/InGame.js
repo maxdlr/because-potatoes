@@ -4,6 +4,7 @@ import Player from "../Class/Player.js";
 console.log('in game !!')
 
 const quitGameBtn = document.getElementById('quit-game');
+const becausePotatoesButton = document.getElementById('because-potatoes');
 const pinCode = window.location.pathname.replace('/game/', '');
 
 let game = new Game();
@@ -68,9 +69,18 @@ function watchPlayers() {
 
 function watchTurn() {
     setInterval(async () => {
-        console.log(await player.isMyTurn())
+        const isPlayerTurn = await player.isMyTurn();
+        if (isPlayerTurn == 1) {
+
+        }
     }, 5000)
 }
+
+// function allowBecausePotatoes() {
+//     becausePotatoesButton.addEventListener('click', () => {
+//
+//     })
+// }
 
 
 
