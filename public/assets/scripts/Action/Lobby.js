@@ -52,9 +52,9 @@ async function getGamePlayers() {
 async function hydratePlayers() {
     const players = await getGamePlayers();
 
-    if (players.count === 0) {
-        window.location.replace('/join-game')
-    }
+    // if (players.count === 0) {
+    //     window.location.replace('/join-game')
+    // }
 
     playerCountEl.innerText = players.count + '/8 joueurs';
 
