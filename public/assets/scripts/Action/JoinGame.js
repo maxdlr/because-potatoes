@@ -150,6 +150,13 @@ function unSetIsLoading() {
 }
 
 function submit() {
+
+    birthdayInput.addEventListener('keydown', async (e) => {
+        if (e.code === 'Enter') {
+            await joinGame();
+        }
+    })
+
     submitBtn.addEventListener('click', async () => {
         await joinGame();
     })

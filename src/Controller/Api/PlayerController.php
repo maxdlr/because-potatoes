@@ -133,7 +133,7 @@ class PlayerController extends AbstractController
     public function giveTurnTo(int $id): string
     {
         try {
-            $this->playerRepository->update(['isPlaying' => true], ['id' => $id]);
+            $this->playerGameRepository->update(['isPlaying' => true], ['playerId' => $id]);
             return json_encode(['message' => 'Turn given to player (ID ' . $id. ')']);
         } catch (mysqli_sql_exception|Exception $e) {
             return json_encode(['message' => $e->getMessage()]);
@@ -147,6 +147,20 @@ class PlayerController extends AbstractController
             $playerGame = $this->playerGameRepository->findOneBy(['playerId' => $id]);
             return json_encode(['points' => $playerGame['points']]);
         } catch (mysqli_sql_exception|Exception $e) {
+            return json_encode(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(uri: '/api/is-my-turn/{id}', name: 'api_is_my_turn', httpMethod: ['GET'])]
+    public function isMyTurn(int $id): string
+    {
+        try {
+            $response = $this->playerGameRepository->findOneBy(['playerId' => $id]);
+            return json_encode($response['isPlaying']);
+        } catch (mysqli_sql_exception $e) {
             return json_encode(['message' => $e->getMessage()]);
         }
     }

@@ -76,7 +76,6 @@ function showStartButton() {
 
     startGameBtn.addEventListener('click', async () => {
         await game.start()
-        window.location.replace('/game/' + pinCode)
     })
 }
 

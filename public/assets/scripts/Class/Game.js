@@ -88,8 +88,9 @@ class Game {
     if (response.message === true) {
         this.isActive = true;
       const youngestPlayer = await this.getYoungestPlayer();
+
       if (youngestPlayer !== null) {
-        await FetchManager.get("/api/give-turn-to/" + youngestPlayer.id);
+        console.log(await FetchManager.get("/api/give-turn-to/" + youngestPlayer.id));
       }
     } else {
       return response.message;

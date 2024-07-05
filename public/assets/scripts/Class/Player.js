@@ -60,6 +60,10 @@ class Player {
         return response.message;
     }
 
+    async isMyTurn() {
+        return await FetchManager.get('/api/is-my-turn' + this.id)
+    }
+
     //todo:
     // async addPoints(currentStackCount: int) {};
     // async declareBecausePotatoes() {};

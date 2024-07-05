@@ -54,7 +54,25 @@ function allowQuit() {
     })
 }
 
-console.log(await getGamePlayers())
-allowQuit()
+function watchPlayers() {
+    setInterval(async () => {
+        game = await game.getGame(getPinCode());
+        if (!game.id) {
+            await player.delete();
+            localStorage.clear();
+            window.location.replace('/')
+        }
+    }, 5000)
+}
 
+function watchTurn() {
+    setInterval(async () => {
+        console.log(player.isMyTurn())
+    })
+}
+
+
+
+allowQuit()
+watchPlayers();
 console.log(getPinCode())
