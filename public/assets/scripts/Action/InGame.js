@@ -15,6 +15,7 @@ let player = new Player();
 player = await getThisPlayer();
 
 let stack = new Stack(game);
+await stack.getStack();
 stack.cardCount = 30;
 
 function getPinCode() {

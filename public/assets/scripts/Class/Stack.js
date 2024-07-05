@@ -10,9 +10,8 @@ class Stack {
     /**
      * @param game : Game
      */
-    async constructor(game) {
+    constructor(game) {
         this.game = game;
-        await this.getStack();
     }
 
     async getStack() {
@@ -39,7 +38,6 @@ class Stack {
 
     /**
      *
-     * @param gameId : int
      * @returns {Promise<*>}
      */
     async resetStack() {
