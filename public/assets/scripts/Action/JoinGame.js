@@ -14,6 +14,7 @@ const loadingSpinner = document.getElementById('loadingSpinner');
 function buildGameListElement(gameName, url) {
     const gameEl = document.createElement('button');
     gameEl.classList.add('cta');
+    gameEl.classList.add('game-list');
     const gameNameEl = document.createElement('span');
     gameNameEl.innerText = gameName;
     gameEl.appendChild(gameNameEl)
@@ -167,5 +168,4 @@ hydratePinCode();
 await hydrateGameList();
 checkIsSubmittable();
 submit();
-watchGameList()
-
+watchGameList();

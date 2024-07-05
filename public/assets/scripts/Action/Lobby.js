@@ -100,6 +100,7 @@ async function watchPlayerCount() {
 function buildPlayerEl(username) {
     let element = document.createElement('div')
     element.classList.add('cta');
+    element.classList.add("m-3");
     element.innerText = username;
     return element;
 }

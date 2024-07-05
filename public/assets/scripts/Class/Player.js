@@ -1,5 +1,6 @@
 'use strict';
 import FetchManager from "../Service/FetchManager.js";
+import {isDeclarePotatoesValid} from "../Action/DeclareBecausePatatoes.js";
 
 class Player {
     id = null;
@@ -59,14 +60,21 @@ class Player {
         return response.message;
     }
 
+    async declareBecausePotatoes(stackId, points) {
+        const data = {
+            playerId: this.id,
+            points: points
+        }
+
+        if (await isDeclarePotatoesValid(stackId)) {
+            return await FetchManager.post('/add-points', data);
+        }
+        return false;
+    }
+
     async isMyTurn() {
         return await FetchManager.get('/api/is-my-turn/' + this.id)
     }
-
-    //todo:
-    // async addPoints(currentStackCount: int) {};
-    // async declareBecausePotatoes() {};
-    // async
 }
 
 /**

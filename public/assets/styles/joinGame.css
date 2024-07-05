@@ -78,17 +78,32 @@ body {
   text-align: center;
 }
 
+.title-h1 {
+  font-family: "RubykOne";
+  text-decoration: none;
+  font-size: 30px;
+  position: sticky;
+  top: 0px;
+}
+
 .cta {
   display: flex;
-  padding: 10px 45px;
+  padding: 10px 35px;
   text-decoration: none;
   font-family: "RubykOne";
-  font-size: 40px;
+  font-size: 30px;
   color: white;
   background: #664680;
   transition: 1s;
   box-shadow: 6px 6px 0 black;
   transform: skewX(-15deg);
+  &.game-list {
+    font-size: 20px;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    width: 100%;
+    align-items: center;
+  }
 }
 
 .cta:focus {
